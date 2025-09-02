@@ -6,9 +6,26 @@ import (
 
 func main() {
 	godotenv.Load()
-	accessToken := "265004ae68ee4830e11a1c7e9ec01c40db7e3cdf"
-	refreshToken := "8d21180b1aed2cb4fca1938743b18d888342be3a"
 	GetStravaAuthURL()
-	GetStravaAccessTokens("36e60ddbc996d314ad98862f429492ed5e891751")
+	stravaCode := "XXX"
+	GetStravaAccessTokens(stravaCode)
 	GetStravaAthlete(accessToken)
+
+	/* 
+	FLOW 1: Initialize 
+	Create auth URL
+	Create user 
+	Manually visit URL and get access code
+	Paste code and get refresh token and strava user data
+	Store refresh toke and strava data in db 
+
+	FLOW 2: Regular use, implement as test afterwards
+	Renew the refresh token from strava
+	Get strava user data and store in db
+	Update refresh token in db
+	*/
+}
+
+func StravaTokenRefresh(refreshToken string) (string, error) {
+	
 }
