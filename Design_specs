@@ -1,0 +1,14 @@
+Databases:
+- postgres for users and varius meta data
+- Module to handle auth and users incl. connection to strava
+- Module for fetching activities from strava and storing them in a db
+- Module to analyse activity data and create recommendations
+- Module to send emails with recommendations
+
+Iterations: 
+- v1 get an activity from my strava and print to cmdline
+- v1.5 authenticaton flow
+- v2 store activity in db
+- v3 send activity to my email
+- v4 automatically send activities to db
+- v5 automatically send activities to email
