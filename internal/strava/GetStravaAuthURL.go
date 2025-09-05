@@ -1,4 +1,4 @@
-package main
+package strava
 
 import (
 	"fmt"
@@ -12,3 +12,5 @@ func GetStravaAuthURL() string {
 	fmt.Println(url)
 	return url
 }
+
+// http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri=http://localhost:8080/exchange_token&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all

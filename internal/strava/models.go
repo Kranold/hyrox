@@ -1,4 +1,4 @@
-package main
+package strava
 
 type StravaAthlete struct {
 	ID       int    `json:"id"`
