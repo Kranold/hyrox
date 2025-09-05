@@ -4,7 +4,7 @@ INSERT INTO STRAVA_USER (id, user_id, strava_id, refresh_token, refresh_token_ex
     premuim, weight)
 VALUES (
     gen_random_uuid(),
-    $1,$2,$3,$4,$5,NOW(),NOW(),$6,$7,$8,$9,$10,$11,$12,$13 
+    $1,$2,$3,$4,NOW(),NOW(),$5,$6,$7,$8,$9,$10,$11,$12,$13 
 )
 RETURNING  *; 
 

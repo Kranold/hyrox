@@ -19,7 +19,7 @@ INSERT INTO STRAVA_USER (id, user_id, strava_id, refresh_token, refresh_token_ex
     premuim, weight)
 VALUES (
     gen_random_uuid(),
-    $1,$2,$3,$4,$5,NOW(),NOW(),$6,$7,$8,$9,$10,$11,$12,$13 
+    $1,$2,$3,$4,NOW(),NOW(),$5,$6,$7,$8,$9,$10,$11,$12,$13 
 )
 RETURNING  id, user_id, strava_id, refresh_token, refresh_token_expires_at, created_at, updated_at, username, firstname, lastname, city, state, country, sex, premuim, weight
 `
@@ -29,7 +29,7 @@ type CreateStravaUserParams struct {
 	StravaID              int64          `json:"strava_id"`
 	RefreshToken          string         `json:"refresh_token"`
 	RefreshTokenExpiresAt time.Time      `json:"refresh_token_expires_at"`
-	CreatedAt             time.Time      `json:"created_at"`
+	Username              string         `json:"username"`
 	Firstname             sql.NullString `json:"firstname"`
 	Lastname              sql.NullString `json:"lastname"`
 	City                  sql.NullString `json:"city"`
@@ -37,7 +37,7 @@ type CreateStravaUserParams struct {
 	Country               sql.NullString `json:"country"`
 	Sex                   sql.NullString `json:"sex"`
 	Premuim               sql.NullBool   `json:"premuim"`
-	Weight                sql.NullInt32  `json:"weight"`
+	Weight                sql.NullInt32  `json:"weight"`	
 }
 
 func (q *Queries) CreateStravaUser(ctx context.Context, arg CreateStravaUserParams) (StravaUser, error) {
@@ -46,7 +46,7 @@ func (q *Queries) CreateStravaUser(ctx context.Context, arg CreateStravaUserPara
 		arg.StravaID,
 		arg.RefreshToken,
 		arg.RefreshTokenExpiresAt,
-		arg.CreatedAt,
+		arg.Username,
 		arg.Firstname,
 		arg.Lastname,
 		arg.City,

@@ -1,31 +1,40 @@
 package main
 
 import (
+	"database/sql"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/Kranold/hyrox/api"
+	"github.com/Kranold/hyrox/internal/database"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	godotenv.Load()
-	GetStravaAuthURL()
-	stravaCode := "XXX"
-	GetStravaAccessTokens(stravaCode)
-	GetStravaAthlete(accessToken)
 
-	/* 
-	FLOW 1: Initialize 
-	Create auth URL
-	Create user 
-	Manually visit URL and get access code
-	Paste code and get refresh token and strava user data
-	Store refresh toke and strava data in db 
+	dbURL := os.Getenv("DB_URL")
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatalf("Error connecting to the database: %v", err)
+	}
+	dbQueries := database.New(db)
 
-	FLOW 2: Regular use, implement as test afterwards
-	Renew the refresh token from strava
-	Get strava user data and store in db
-	Update refresh token in db
-	*/
-}
+	apiCfg := &api.APIConfig{
+		DB: *dbQueries,
+	}
 
-func StravaTokenRefresh(refreshToken string) (string, error) {
-	
+	mux := http.NewServeMux()
+	mux.HandleFunc("/create_user", apiCfg.CreateUser)
+	mux.HandleFunc("/create_user", apiCfg.LinkStravaAccountToUser)
+
+	port := "8080"
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: mux,
+	}
+	log.Printf("Starting on port: %s\n", port)
+	log.Fatal(server.ListenAndServe())
 }

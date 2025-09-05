@@ -6,9 +6,33 @@ Databases:
 - Module to send emails with recommendations
 
 Iterations: 
-- v1 get an activity from my strava and print to cmdline
-- v1.5 authenticaton flow
-- v2 store activity in db
+- v1 get an activity from my strava and print to cmdline (done)
+- v1.5 authenticaton flow (done)
+- v2 store activity in db (in progress)
 - v3 send activity to my email
 - v4 automatically send activities to db
 - v5 automatically send activities to email
+- v6 rebuild everything as an API
+- v7 Add a basic frontend for authentication
+
+/*
+endpoints
+- CreateUser (x)
+- LinkStravaAccountWithCode (x)
+- GetStravaActivities ()
+
+*/
+
+/*
+	FLOW 1: Initialize
+	Create auth URL
+	Create user
+	Manually visit URL and get access code
+	Paste code and get refresh token and strava user data
+	Store refresh toke and strava data in db
+
+	FLOW 2: Regular use, implement as test afterwards
+	Renew the refresh token from strava
+	Get strava user data and store in db
+	Update refresh token in db
+*/
