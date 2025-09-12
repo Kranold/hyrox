@@ -3,8 +3,6 @@ CREATE TABLE STRAVA_USER (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES USERS(id) ON DELETE CASCADE,
     strava_id BIGINT UNIQUE NOT NULL,
-    refresh_token VARCHAR(255) NOT NULL,
-    refresh_token_expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     username  VARCHAR(100) NOT NULL,

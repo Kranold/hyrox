@@ -1,25 +1,38 @@
-Databases:
-- postgres for users and varius meta data
-- Module to handle auth and users incl. connection to strava
-- Module for fetching activities from strava and storing them in a db
-- Module to analyse activity data and create recommendations
-- Module to send emails with recommendations
 
 Iterations: 
-- v1 get an activity from my strava and print to cmdline (done)
-- v1.5 authenticaton flow (done)
-- v2 store activity in db (in progress)
-- v3 send activity to my email
-- v4 automatically send activities to db
+- v1 authenticaton flow (done) 
+- v1.5 get an activity from my strava and print to cmdline (done) 
+- v2 store activity in db (done)
+- v3 ask chatGPT for feedback on activity ()
+- v4 send activity to my email
 - v5 automatically send activities to email
-- v6 rebuild everything as an API
-- v7 Add a basic frontend for authentication
+- v6 Add authorization
+- v7 Add a basic frontend for onboarding
+
+Send strava activities chatGPT and get feedback
+ part 1: store all strava activities in db
+ part 2: send strava activities to chatGPT and return feedback 
+
+Part 1:
+- Design and implement db schema
+	- write migrations incl constraints (x)
+- Create required queries
+    - Insert activity (x)
+	- Fetch activities by user (x)
+- Finish end-point to fetch and store all activities from strava to db
+    - Handle only fetching at sync
+
+
+part 2 tbd 
+
+
 
 /*
 endpoints
 - CreateUser (x)
 - LinkStravaAccountWithCode (x)
-- GetStravaActivities ()
+- GetStravaActivities (x)
+- login (x)
 
 */
 

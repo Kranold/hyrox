@@ -23,17 +23,22 @@ func main() {
 	dbQueries := database.New(db)
 
 	apiCfg := &api.APIConfig{
-		DB: *dbQueries,
+		DB:        *dbQueries,
+		JWTSecret: os.Getenv("JWT_SECRET"),
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/create_user", apiCfg.CreateUser)
-	mux.HandleFunc("/create_user", apiCfg.LinkStravaAccountToUser)
+	mux.Handle("/getactivities", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetAllStravaActivites)))
+	mux.HandleFunc("/strava_token_exchange", apiCfg.StravaTokenExchangeHandler)
+	mux.HandleFunc("/delete_users", apiCfg.DeleteAllUsers)
+	mux.HandleFunc("/login", apiCfg.Login)
 
+	muxHandlerWithCORS := api.CORSMiddleware(mux)
 	port := "8080"
 	server := &http.Server{
 		Addr:    ":" + port,
-		Handler: mux,
+		Handler: muxHandlerWithCORS,
 	}
 	log.Printf("Starting on port: %s\n", port)
 	log.Fatal(server.ListenAndServe())

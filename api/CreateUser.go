@@ -1,10 +1,12 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/Kranold/hyrox/internal/auth"
 	"github.com/Kranold/hyrox/internal/database"
 )
 
@@ -14,6 +16,7 @@ func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Email    string `json:"email"`
 		UserName string `json:"username"`
+		Password string `json:"password"`
 	}
 	newUser := parameters{}
 
@@ -24,10 +27,12 @@ func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hashedPassword, _ := auth.HashPassword(newUser.Password)
 	// Creating the user
 	user, err := cfg.DB.CreateUser(r.Context(), database.CreateUserParams{
-		Email:    newUser.Email,
-		Username: newUser.UserName,
+		Email:          newUser.Email,
+		Username:       newUser.UserName,
+		HashedPassword: sql.NullString{String: hashedPassword, Valid: true},
 	})
 	if err != nil {
 		fmt.Println("Error creating user:", err)
