@@ -14,7 +14,7 @@ CREATE TABLE strava_activities (
     elev_low FLOAT, -- Lowest elevation in meters
     type VARCHAR(50), -- Type of activity (e.g., Run, Ride, etc.)
     sport_type VARCHAR(50), -- Sport type (e.g., MountainBikeRide, GravelRide, etc.)
-    start_date TIMESTAMP, -- Start date and time in UTC
+    start_date TEXT, -- Start date and time in UTC
     start_date_local TIMESTAMP, -- Start date and time in local timezone
     timezone VARCHAR(100), -- Timezone of the activity
     average_speed FLOAT, -- Average speed in meters per second

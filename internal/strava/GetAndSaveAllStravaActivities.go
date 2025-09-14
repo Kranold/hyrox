@@ -43,7 +43,6 @@ func (cfg *StravaService) GetAndSaveAllStravaActivites(ctx context.Context, user
 		fmt.Printf("Unexpected status code: %d\n", resp.StatusCode)
 		return err
 	}
-
 	var activities []StravaActivity
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&activities)
@@ -55,14 +54,29 @@ func (cfg *StravaService) GetAndSaveAllStravaActivites(ctx context.Context, user
 	// save all the activites to the database
 
 	for _, a := range activities {
-		fmt.Println(a)
+
 		err := cfg.DB.CreateStravaActivity(ctx, database.CreateStravaActivityParams{
-			ID:          a.ID,
-			ExternalID:  helperfunctions.ToNullString(a.ExternalID),
-			UploadID:    helperfunctions.ToNullInt64(a.UploadID),
-			AthleteID:   helperfunctions.ToNullInt64(a.AthleteID),
-			Name:        helperfunctions.ToNullString(a.Name),
-			Description: helperfunctions.ToNullString(a.Description),
+			ID:                 a.ID,
+			ExternalID:         helperfunctions.ToNullString(a.ExternalID),
+			UploadID:           helperfunctions.ToNullInt64(a.UploadID),
+			AthleteID:          helperfunctions.ToNullInt64(a.Athlete.ID),
+			Name:               helperfunctions.ToNullString(a.Name),
+			Description:        helperfunctions.ToNullString(a.Description),
+			Distance:           helperfunctions.ToNullFloat64(a.Distance),
+			MovingTime:         helperfunctions.ToNullInt32(a.MovingTime),
+			ElapsedTime:        helperfunctions.ToNullInt32(a.ElapsedTime),
+			TotalElevationGain: helperfunctions.ToNullFloat64(a.TotalElevationGain),
+			ElevHigh:           helperfunctions.ToNullFloat64(a.ElevHigh),
+			ElevLow:            helperfunctions.ToNullFloat64(a.ElevLow),
+			Type:               helperfunctions.ToNullString(a.Type),
+			SportType:          helperfunctions.ToNullString(a.SportType),
+			StartDate:          helperfunctions.ToNullString(a.StartDate),
+			AverageSpeed:       helperfunctions.ToNullFloat64(a.AverageSpeed),
+			MaxSpeed:           helperfunctions.ToNullFloat64(a.MaxSpeed),
+			AverageCadence:     helperfunctions.ToNullFloat64(a.AverageCadence),
+			AverageHeartrate:   helperfunctions.ToNullFloat64(a.AverageHeartrate),
+			MaxHeartrate:       helperfunctions.ToNullFloat64(a.MaxHeartrate),
+			Calories:           helperfunctions.ToNullFloat64(a.Calories),
 		})
 		if err != nil {
 			fmt.Println(err)

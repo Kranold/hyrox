@@ -35,7 +35,7 @@ type StravaActivity struct {
 	ElevLow            sql.NullFloat64 `json:"elev_low"`
 	Type               sql.NullString  `json:"type"`
 	SportType          sql.NullString  `json:"sport_type"`
-	StartDate          sql.NullTime    `json:"start_date"`
+	StartDate          sql.NullString  `json:"start_date"`
 	StartDateLocal     sql.NullTime    `json:"start_date_local"`
 	Timezone           sql.NullString  `json:"timezone"`
 	AverageSpeed       sql.NullFloat64 `json:"average_speed"`

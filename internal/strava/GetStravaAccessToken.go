@@ -23,14 +23,6 @@ type accessToken struct {
 func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uuid.UUID) (accessToken, error) {
 	godotenv.Load()
 	var returnToken accessToken
-	/*
-		- Get token object
-		- check if access token is expired
-		- if expired, use refresh token to get new access token
-		- update the access token in the database
-		- update the refresh token in the database
-		- return the new access token
-	*/
 
 	// Fetching tokens
 	stravaAccessTokens, err := cfg.DB.GetStravaAccessTokensByApplicationUserID(ctx, userID)

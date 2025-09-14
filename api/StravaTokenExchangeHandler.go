@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kranold/hyrox/internal/auth"
 	"github.com/Kranold/hyrox/internal/database"
+	"github.com/Kranold/hyrox/internal/helperfunctions"
 	"github.com/Kranold/hyrox/internal/strava"
 )
 
@@ -34,9 +35,17 @@ func (cfg *APIConfig) StravaTokenExchangeHandler(w http.ResponseWriter, r *http.
 		return
 	}
 	newStravaUserData := database.CreateStravaUserParams{
-		UserID:   userID,
-		StravaID: int64(tokenResponse.Athlete.ID),
-		Username: tokenResponse.Athlete.UserName,
+		UserID:    userID,
+		StravaID:  int64(tokenResponse.Athlete.ID),
+		Username:  tokenResponse.Athlete.UserName,
+		Firstname: helperfunctions.ToNullString(tokenResponse.Athlete.FirstName),
+		Lastname:  helperfunctions.ToNullString(tokenResponse.Athlete.LastName),
+		City:      helperfunctions.ToNullString(tokenResponse.Athlete.City),
+		State:     helperfunctions.ToNullString(tokenResponse.Athlete.State),
+		Country:   helperfunctions.ToNullString(tokenResponse.Athlete.Country),
+		Sex:       helperfunctions.ToNullString(tokenResponse.Athlete.Sex),
+		Premuim:   helperfunctions.ToNullBool(tokenResponse.Athlete.Premium),
+		Weight:    helperfunctions.ToNullInt32(int(tokenResponse.Athlete.Weight)),
 	}
 
 	stravaUser, err := cfg.DB.CreateStravaUser(r.Context(), newStravaUserData)

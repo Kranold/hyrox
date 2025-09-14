@@ -24,3 +24,14 @@ func ToNullInt64(i int64) sql.NullInt64 {
 	}
 	return sql.NullInt64{Int64: int64(i), Valid: true}
 }
+
+func ToNullFloat64(f float64) sql.NullFloat64 {
+	if f == 0 {
+		return sql.NullFloat64{Float64: 0, Valid: false}
+	}
+	return sql.NullFloat64{Float64: f, Valid: true}
+}
+
+func ToNullBool(b bool) sql.NullBool {
+	return sql.NullBool{Bool: b, Valid: true}
+}

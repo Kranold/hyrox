@@ -44,3 +44,9 @@ INSERT INTO strava_activities (
 SELECT * FROM strava_activities
 WHERE athlete_id = $1
 ORDER BY start_date DESC;
+
+-- name: GetStravaActivitiesByUserID :many
+SELECT sa.* FROM strava_activities sa
+JOIN strava_user su ON su.strava_id = sa.athlete_id
+WHERE su.user_id = $1
+ORDER BY sa.start_date DESC;

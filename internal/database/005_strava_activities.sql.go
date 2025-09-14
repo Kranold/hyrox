@@ -8,6 +8,8 @@ package database
 import (
 	"context"
 	"database/sql"
+
+	"github.com/google/uuid"
 )
 
 const createStravaActivity = `-- name: CreateStravaActivity :exec
@@ -68,7 +70,7 @@ type CreateStravaActivityParams struct {
 	ElevLow            sql.NullFloat64 `json:"elev_low"`
 	Type               sql.NullString  `json:"type"`
 	SportType          sql.NullString  `json:"sport_type"`
-	StartDate          sql.NullTime    `json:"start_date"`
+	StartDate          sql.NullString  `json:"start_date"`
 	StartDateLocal     sql.NullTime    `json:"start_date_local"`
 	Timezone           sql.NullString  `json:"timezone"`
 	AverageSpeed       sql.NullFloat64 `json:"average_speed"`
@@ -142,6 +144,75 @@ ORDER BY start_date DESC
 
 func (q *Queries) GetStravaActivitiesByAthleteID(ctx context.Context, athleteID sql.NullInt64) ([]StravaActivity, error) {
 	rows, err := q.db.QueryContext(ctx, getStravaActivitiesByAthleteID, athleteID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []StravaActivity
+	for rows.Next() {
+		var i StravaActivity
+		if err := rows.Scan(
+			&i.ID,
+			&i.ExternalID,
+			&i.UploadID,
+			&i.AthleteID,
+			&i.Name,
+			&i.Description,
+			&i.Distance,
+			&i.MovingTime,
+			&i.ElapsedTime,
+			&i.TotalElevationGain,
+			&i.ElevHigh,
+			&i.ElevLow,
+			&i.Type,
+			&i.SportType,
+			&i.StartDate,
+			&i.StartDateLocal,
+			&i.Timezone,
+			&i.AverageSpeed,
+			&i.MaxSpeed,
+			&i.AverageCadence,
+			&i.AverageHeartrate,
+			&i.MaxHeartrate,
+			&i.Calories,
+			&i.WorkoutType,
+			&i.KudosCount,
+			&i.CommentCount,
+			&i.AchievementCount,
+			&i.PhotoCount,
+			&i.Trainer,
+			&i.Commute,
+			&i.Manual,
+			&i.Private,
+			&i.Visibility,
+			&i.Flagged,
+			&i.GearID,
+			&i.MapSummary,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getStravaActivitiesByUserID = `-- name: GetStravaActivitiesByUserID :many
+SELECT sa.id, sa.external_id, sa.upload_id, sa.athlete_id, sa.name, sa.description, sa.distance, sa.moving_time, sa.elapsed_time, sa.total_elevation_gain, sa.elev_high, sa.elev_low, sa.type, sa.sport_type, sa.start_date, sa.start_date_local, sa.timezone, sa.average_speed, sa.max_speed, sa.average_cadence, sa.average_heartrate, sa.max_heartrate, sa.calories, sa.workout_type, sa.kudos_count, sa.comment_count, sa.achievement_count, sa.photo_count, sa.trainer, sa.commute, sa.manual, sa.private, sa.visibility, sa.flagged, sa.gear_id, sa.map_summary, sa.created_at, sa.updated_at FROM strava_activities sa
+JOIN strava_user su ON su.strava_id = sa.athlete_id
+WHERE su.user_id = $1
+ORDER BY sa.start_date DESC
+`
+
+func (q *Queries) GetStravaActivitiesByUserID(ctx context.Context, userID uuid.UUID) ([]StravaActivity, error) {
+	rows, err := q.db.QueryContext(ctx, getStravaActivitiesByUserID, userID)
 	if err != nil {
 		return nil, err
 	}

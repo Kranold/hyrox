@@ -33,6 +33,8 @@ func main() {
 	mux.HandleFunc("/strava_token_exchange", apiCfg.StravaTokenExchangeHandler)
 	mux.HandleFunc("/delete_users", apiCfg.DeleteAllUsers)
 	mux.HandleFunc("/login", apiCfg.Login)
+	mux.Handle("/get_coaching", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetCoaching)))
+	mux.Handle("/send_coaching_email", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.SendCoachingEmail)))
 
 	muxHandlerWithCORS := api.CORSMiddleware(mux)
 	port := "8080"
@@ -42,4 +44,5 @@ func main() {
 	}
 	log.Printf("Starting on port: %s\n", port)
 	log.Fatal(server.ListenAndServe())
+
 }

@@ -9,9 +9,16 @@ type StravaService struct {
 }
 
 type StravaAthlete struct {
-	ID       int    `json:"id"`
-	UserName string `json:"username"`
-	Premium  bool   `json:"premium"`
+	ID        int     `json:"id"`
+	UserName  string  `json:"username"`
+	Premium   bool    `json:"premium"`
+	FirstName string  `json:"firstname"`
+	LastName  string  `json:"lastname"`
+	City      string  `json:"city"`
+	State     string  `json:"state"`
+	Country   string  `json:"country"`
+	Sex       string  `json:"sex"`
+	Weight    float64 `json:"weight"`
 }
 
 type StravaTokenResponse struct {
@@ -27,7 +34,7 @@ type StravaActivity struct {
 	ID                 int64     `json:"id"`
 	ExternalID         string    `json:"external_id"`
 	UploadID           int64     `json:"upload_id"`
-	AthleteID          int64     `json:"athlete_id"`
+	Athlete            Athlete   `json:"athlete"`
 	Name               string    `json:"name"`
 	Description        string    `json:"description"`
 	Distance           float64   `json:"distance"`
@@ -64,4 +71,9 @@ type StravaActivity struct {
 	MapSummary         string    `json:"map_summary"`
 	CreatedAt          string    `json:"created_at"` // ISO 8601 format
 	UpdatedAt          string    `json:"updated_at"` // ISO 8601 format
+}
+
+type Athlete struct {
+	ID             int64 `json:"id"`
+	Resource_state int   `json:"resource_state"`
 }
