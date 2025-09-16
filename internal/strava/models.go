@@ -71,9 +71,56 @@ type StravaActivity struct {
 	MapSummary         string    `json:"map_summary"`
 	CreatedAt          string    `json:"created_at"` // ISO 8601 format
 	UpdatedAt          string    `json:"updated_at"` // ISO 8601 format
+	//Splits             string          `json:"splits_metric"`
+	Segments []StravaSegment `json:"segment_efforts"`
+	Laps     []StravaLap     `json:"laps"`
 }
 
 type Athlete struct {
 	ID             int64 `json:"id"`
 	Resource_state int   `json:"resource_state"`
+}
+
+type Activity struct {
+	ID             int64 `json:"id"`
+	Resource_state int   `json:"resource_state"`
+}
+
+type StravaSegment struct {
+	ID               int64   `json:"id"`
+	ActivityID       int64   `json:"activity_id"`
+	ElapsedTime      int32   `json:"elapsed_time"`
+	StartDate        string  `json:"start_date"`
+	StartDateLocal   string  `json:"start_date_local"`
+	Distance         float64 `json:"distance"`
+	MovingTime       int32   `json:"moving_time"`
+	StartIndex       int32   `json:"start_index"`
+	EndIndex         int32   `json:"end_index"`
+	AverageCadence   float64 `json:"average_cadence"`
+	AverageWatts     float64 `json:"average_watts"`
+	AverageHeartrate float64 `json:"average_heartrate"`
+	MaxHeartrate     float64 `json:"max_heartrate"`
+}
+
+type StravaLap struct {
+	ID                 int64    `json:"id"`
+	Activity           Activity `json:"activity_id"`
+	Athlete            Athlete  `json:"athlete_id"`
+	AverageCadence     float64  `json:"average_cadence"`
+	AverageSpeed       float64  `json:"average_speed"`
+	AverageHeartrate   float64  `json:"average_heartrate"`
+	MaxHeartrate       float64  `json:"max_heartrate"`
+	Distance           float64  `json:"distance"`
+	ElapsedTime        int32    `json:"elapsed_time"`
+	StartIndex         int32    `json:"start_index"`
+	EndIndex           int32    `json:"end_index"`
+	LapIndex           int32    `json:"lap_index"`
+	MaxSpeed           float64  `json:"max_speed"`
+	MovingTime         int32    `json:"moving_time"`
+	Name               string   `json:"name"`
+	PaceZone           int32    `json:"pace_zone"`
+	Split              int32    `json:"split"`
+	StartDate          string   `json:"start_date"`
+	StartDateLocal     string   `json:"start_date_local"`
+	TotalElevationGain float64  `json:"total_elevation_gain"`
 }

@@ -49,9 +49,10 @@ INSERT INTO strava_activities (
     visibility,
     flagged,
     gear_id,
+    splits,
     map_summary
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37
 )
 `
 
@@ -71,7 +72,7 @@ type CreateStravaActivityParams struct {
 	Type               sql.NullString  `json:"type"`
 	SportType          sql.NullString  `json:"sport_type"`
 	StartDate          sql.NullString  `json:"start_date"`
-	StartDateLocal     sql.NullTime    `json:"start_date_local"`
+	StartDateLocal     sql.NullString  `json:"start_date_local"`
 	Timezone           sql.NullString  `json:"timezone"`
 	AverageSpeed       sql.NullFloat64 `json:"average_speed"`
 	MaxSpeed           sql.NullFloat64 `json:"max_speed"`
@@ -91,6 +92,7 @@ type CreateStravaActivityParams struct {
 	Visibility         sql.NullString  `json:"visibility"`
 	Flagged            sql.NullBool    `json:"flagged"`
 	GearID             sql.NullString  `json:"gear_id"`
+	Splits             sql.NullString  `json:"splits"`
 	MapSummary         sql.NullString  `json:"map_summary"`
 }
 
@@ -131,13 +133,197 @@ func (q *Queries) CreateStravaActivity(ctx context.Context, arg CreateStravaActi
 		arg.Visibility,
 		arg.Flagged,
 		arg.GearID,
+		arg.Splits,
 		arg.MapSummary,
 	)
 	return err
 }
 
+const getAllStravaActivitySegmentsAndLapsByUserID = `-- name: GetAllStravaActivitySegmentsAndLapsByUserID :many
+SELECT sa.id, sa.external_id, sa.upload_id, sa.athlete_id, sa.name, sa.description, sa.distance, sa.moving_time, sa.elapsed_time, sa.total_elevation_gain, sa.elev_high, sa.elev_low, sa.type, sa.sport_type, sa.start_date, sa.start_date_local, sa.timezone, sa.average_speed, sa.max_speed, sa.average_cadence, sa.average_heartrate, sa.max_heartrate, sa.calories, sa.workout_type, sa.kudos_count, sa.comment_count, sa.achievement_count, sa.photo_count, sa.trainer, sa.commute, sa.manual, sa.private, sa.visibility, sa.flagged, sa.gear_id, sa.splits, sa.map_summary, sa.created_at, sa.updated_at, ss.id, ss.activity_id, ss.elapsed_time, ss.start_date, ss.start_date_local, ss.distance, ss.moving_time, ss.start_index, ss.end_index, ss.average_cadence, ss.average_watts, ss.average_heartrate, ss.max_heartrate, sl.id, sl.activity_id, sl.athlete_id, sl.average_cadence, sl.average_speed, sl.average_heartrate, sl.max_heartrate, sl.distance, sl.elapsed_time, sl.start_index, sl.end_index, sl.lap_index, sl.max_speed, sl.moving_time, sl.name, sl.pace_zone, sl.split, sl.start_date, sl.start_date_local, sl.total_elevation_gain, sl.created_at, sl.updated_at FROM strava_activities sa
+LEFT JOIN strava_segments ss on ss.activity_id = sa.id 
+LEFT JOIN strava_laps sl on sl.activity_id = sa.id
+JOIN strava_user su ON su.strava_id = sa.athlete_id
+WHERE su.user_id  = $1
+`
+
+type GetAllStravaActivitySegmentsAndLapsByUserIDRow struct {
+	ID                   int64           `json:"id"`
+	ExternalID           sql.NullString  `json:"external_id"`
+	UploadID             sql.NullInt64   `json:"upload_id"`
+	AthleteID            sql.NullInt64   `json:"athlete_id"`
+	Name                 sql.NullString  `json:"name"`
+	Description          sql.NullString  `json:"description"`
+	Distance             sql.NullFloat64 `json:"distance"`
+	MovingTime           sql.NullInt32   `json:"moving_time"`
+	ElapsedTime          sql.NullInt32   `json:"elapsed_time"`
+	TotalElevationGain   sql.NullFloat64 `json:"total_elevation_gain"`
+	ElevHigh             sql.NullFloat64 `json:"elev_high"`
+	ElevLow              sql.NullFloat64 `json:"elev_low"`
+	Type                 sql.NullString  `json:"type"`
+	SportType            sql.NullString  `json:"sport_type"`
+	StartDate            sql.NullString  `json:"start_date"`
+	StartDateLocal       sql.NullString  `json:"start_date_local"`
+	Timezone             sql.NullString  `json:"timezone"`
+	AverageSpeed         sql.NullFloat64 `json:"average_speed"`
+	MaxSpeed             sql.NullFloat64 `json:"max_speed"`
+	AverageCadence       sql.NullFloat64 `json:"average_cadence"`
+	AverageHeartrate     sql.NullFloat64 `json:"average_heartrate"`
+	MaxHeartrate         sql.NullFloat64 `json:"max_heartrate"`
+	Calories             sql.NullFloat64 `json:"calories"`
+	WorkoutType          sql.NullInt32   `json:"workout_type"`
+	KudosCount           sql.NullInt32   `json:"kudos_count"`
+	CommentCount         sql.NullInt32   `json:"comment_count"`
+	AchievementCount     sql.NullInt32   `json:"achievement_count"`
+	PhotoCount           sql.NullInt32   `json:"photo_count"`
+	Trainer              sql.NullBool    `json:"trainer"`
+	Commute              sql.NullBool    `json:"commute"`
+	Manual               sql.NullBool    `json:"manual"`
+	Private              sql.NullBool    `json:"private"`
+	Visibility           sql.NullString  `json:"visibility"`
+	Flagged              sql.NullBool    `json:"flagged"`
+	GearID               sql.NullString  `json:"gear_id"`
+	Splits               sql.NullString  `json:"splits"`
+	MapSummary           sql.NullString  `json:"map_summary"`
+	CreatedAt            sql.NullTime    `json:"created_at"`
+	UpdatedAt            sql.NullTime    `json:"updated_at"`
+	ID_2                 sql.NullInt64   `json:"id_2"`
+	ActivityID           sql.NullInt64   `json:"activity_id"`
+	ElapsedTime_2        sql.NullInt32   `json:"elapsed_time_2"`
+	StartDate_2          sql.NullString  `json:"start_date_2"`
+	StartDateLocal_2     sql.NullString  `json:"start_date_local_2"`
+	Distance_2           sql.NullFloat64 `json:"distance_2"`
+	MovingTime_2         sql.NullInt32   `json:"moving_time_2"`
+	StartIndex           sql.NullInt32   `json:"start_index"`
+	EndIndex             sql.NullInt32   `json:"end_index"`
+	AverageCadence_2     sql.NullFloat64 `json:"average_cadence_2"`
+	AverageWatts         sql.NullFloat64 `json:"average_watts"`
+	AverageHeartrate_2   sql.NullFloat64 `json:"average_heartrate_2"`
+	MaxHeartrate_2       sql.NullFloat64 `json:"max_heartrate_2"`
+	ID_3                 sql.NullInt64   `json:"id_3"`
+	ActivityID_2         sql.NullInt64   `json:"activity_id_2"`
+	AthleteID_2          sql.NullInt64   `json:"athlete_id_2"`
+	AverageCadence_3     sql.NullFloat64 `json:"average_cadence_3"`
+	AverageSpeed_2       sql.NullFloat64 `json:"average_speed_2"`
+	AverageHeartrate_3   sql.NullFloat64 `json:"average_heartrate_3"`
+	MaxHeartrate_3       sql.NullFloat64 `json:"max_heartrate_3"`
+	Distance_3           sql.NullFloat64 `json:"distance_3"`
+	ElapsedTime_3        sql.NullInt32   `json:"elapsed_time_3"`
+	StartIndex_2         sql.NullInt32   `json:"start_index_2"`
+	EndIndex_2           sql.NullInt32   `json:"end_index_2"`
+	LapIndex             sql.NullInt32   `json:"lap_index"`
+	MaxSpeed_2           sql.NullFloat64 `json:"max_speed_2"`
+	MovingTime_3         sql.NullInt32   `json:"moving_time_3"`
+	Name_2               sql.NullString  `json:"name_2"`
+	PaceZone             sql.NullInt32   `json:"pace_zone"`
+	Split                sql.NullInt32   `json:"split"`
+	StartDate_3          sql.NullString  `json:"start_date_3"`
+	StartDateLocal_3     sql.NullString  `json:"start_date_local_3"`
+	TotalElevationGain_2 sql.NullFloat64 `json:"total_elevation_gain_2"`
+	CreatedAt_2          sql.NullTime    `json:"created_at_2"`
+	UpdatedAt_2          sql.NullTime    `json:"updated_at_2"`
+}
+
+func (q *Queries) GetAllStravaActivitySegmentsAndLapsByUserID(ctx context.Context, userID uuid.UUID) ([]GetAllStravaActivitySegmentsAndLapsByUserIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllStravaActivitySegmentsAndLapsByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllStravaActivitySegmentsAndLapsByUserIDRow
+	for rows.Next() {
+		var i GetAllStravaActivitySegmentsAndLapsByUserIDRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ExternalID,
+			&i.UploadID,
+			&i.AthleteID,
+			&i.Name,
+			&i.Description,
+			&i.Distance,
+			&i.MovingTime,
+			&i.ElapsedTime,
+			&i.TotalElevationGain,
+			&i.ElevHigh,
+			&i.ElevLow,
+			&i.Type,
+			&i.SportType,
+			&i.StartDate,
+			&i.StartDateLocal,
+			&i.Timezone,
+			&i.AverageSpeed,
+			&i.MaxSpeed,
+			&i.AverageCadence,
+			&i.AverageHeartrate,
+			&i.MaxHeartrate,
+			&i.Calories,
+			&i.WorkoutType,
+			&i.KudosCount,
+			&i.CommentCount,
+			&i.AchievementCount,
+			&i.PhotoCount,
+			&i.Trainer,
+			&i.Commute,
+			&i.Manual,
+			&i.Private,
+			&i.Visibility,
+			&i.Flagged,
+			&i.GearID,
+			&i.Splits,
+			&i.MapSummary,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.ID_2,
+			&i.ActivityID,
+			&i.ElapsedTime_2,
+			&i.StartDate_2,
+			&i.StartDateLocal_2,
+			&i.Distance_2,
+			&i.MovingTime_2,
+			&i.StartIndex,
+			&i.EndIndex,
+			&i.AverageCadence_2,
+			&i.AverageWatts,
+			&i.AverageHeartrate_2,
+			&i.MaxHeartrate_2,
+			&i.ID_3,
+			&i.ActivityID_2,
+			&i.AthleteID_2,
+			&i.AverageCadence_3,
+			&i.AverageSpeed_2,
+			&i.AverageHeartrate_3,
+			&i.MaxHeartrate_3,
+			&i.Distance_3,
+			&i.ElapsedTime_3,
+			&i.StartIndex_2,
+			&i.EndIndex_2,
+			&i.LapIndex,
+			&i.MaxSpeed_2,
+			&i.MovingTime_3,
+			&i.Name_2,
+			&i.PaceZone,
+			&i.Split,
+			&i.StartDate_3,
+			&i.StartDateLocal_3,
+			&i.TotalElevationGain_2,
+			&i.CreatedAt_2,
+			&i.UpdatedAt_2,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getStravaActivitiesByAthleteID = `-- name: GetStravaActivitiesByAthleteID :many
-SELECT id, external_id, upload_id, athlete_id, name, description, distance, moving_time, elapsed_time, total_elevation_gain, elev_high, elev_low, type, sport_type, start_date, start_date_local, timezone, average_speed, max_speed, average_cadence, average_heartrate, max_heartrate, calories, workout_type, kudos_count, comment_count, achievement_count, photo_count, trainer, commute, manual, private, visibility, flagged, gear_id, map_summary, created_at, updated_at FROM strava_activities
+SELECT id, external_id, upload_id, athlete_id, name, description, distance, moving_time, elapsed_time, total_elevation_gain, elev_high, elev_low, type, sport_type, start_date, start_date_local, timezone, average_speed, max_speed, average_cadence, average_heartrate, max_heartrate, calories, workout_type, kudos_count, comment_count, achievement_count, photo_count, trainer, commute, manual, private, visibility, flagged, gear_id, splits, map_summary, created_at, updated_at FROM strava_activities
 WHERE athlete_id = $1
 ORDER BY start_date DESC
 `
@@ -187,6 +373,7 @@ func (q *Queries) GetStravaActivitiesByAthleteID(ctx context.Context, athleteID 
 			&i.Visibility,
 			&i.Flagged,
 			&i.GearID,
+			&i.Splits,
 			&i.MapSummary,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -205,7 +392,7 @@ func (q *Queries) GetStravaActivitiesByAthleteID(ctx context.Context, athleteID 
 }
 
 const getStravaActivitiesByUserID = `-- name: GetStravaActivitiesByUserID :many
-SELECT sa.id, sa.external_id, sa.upload_id, sa.athlete_id, sa.name, sa.description, sa.distance, sa.moving_time, sa.elapsed_time, sa.total_elevation_gain, sa.elev_high, sa.elev_low, sa.type, sa.sport_type, sa.start_date, sa.start_date_local, sa.timezone, sa.average_speed, sa.max_speed, sa.average_cadence, sa.average_heartrate, sa.max_heartrate, sa.calories, sa.workout_type, sa.kudos_count, sa.comment_count, sa.achievement_count, sa.photo_count, sa.trainer, sa.commute, sa.manual, sa.private, sa.visibility, sa.flagged, sa.gear_id, sa.map_summary, sa.created_at, sa.updated_at FROM strava_activities sa
+SELECT sa.id, sa.external_id, sa.upload_id, sa.athlete_id, sa.name, sa.description, sa.distance, sa.moving_time, sa.elapsed_time, sa.total_elevation_gain, sa.elev_high, sa.elev_low, sa.type, sa.sport_type, sa.start_date, sa.start_date_local, sa.timezone, sa.average_speed, sa.max_speed, sa.average_cadence, sa.average_heartrate, sa.max_heartrate, sa.calories, sa.workout_type, sa.kudos_count, sa.comment_count, sa.achievement_count, sa.photo_count, sa.trainer, sa.commute, sa.manual, sa.private, sa.visibility, sa.flagged, sa.gear_id, sa.splits, sa.map_summary, sa.created_at, sa.updated_at FROM strava_activities sa
 JOIN strava_user su ON su.strava_id = sa.athlete_id
 WHERE su.user_id = $1
 ORDER BY sa.start_date DESC
@@ -256,6 +443,7 @@ func (q *Queries) GetStravaActivitiesByUserID(ctx context.Context, userID uuid.U
 			&i.Visibility,
 			&i.Flagged,
 			&i.GearID,
+			&i.Splits,
 			&i.MapSummary,
 			&i.CreatedAt,
 			&i.UpdatedAt,

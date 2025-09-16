@@ -14,8 +14,8 @@ CREATE TABLE strava_activities (
     elev_low FLOAT, -- Lowest elevation in meters
     type VARCHAR(50), -- Type of activity (e.g., Run, Ride, etc.)
     sport_type VARCHAR(50), -- Sport type (e.g., MountainBikeRide, GravelRide, etc.)
-    start_date TEXT, -- Start date and time in UTC
-    start_date_local TIMESTAMP, -- Start date and time in local timezone
+    start_date VARCHAR(255), -- Start date and time in UTC
+    start_date_local VARCHAR(255), -- Start date and time in local timezone
     timezone VARCHAR(100), -- Timezone of the activity
     average_speed FLOAT, -- Average speed in meters per second
     max_speed FLOAT, -- Maximum speed in meters per second
@@ -35,6 +35,7 @@ CREATE TABLE strava_activities (
     visibility VARCHAR(50), -- Visibility setting of the activity
     flagged BOOLEAN, -- Whether the activity is flagged
     gear_id VARCHAR(50), -- ID of the gear used
+    splits text, -- JSONB, -- JSON array of splits (if available)
     map_summary TEXT, -- Summary polyline of the route
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Record update timestamp

@@ -36,7 +36,7 @@ type StravaActivity struct {
 	Type               sql.NullString  `json:"type"`
 	SportType          sql.NullString  `json:"sport_type"`
 	StartDate          sql.NullString  `json:"start_date"`
-	StartDateLocal     sql.NullTime    `json:"start_date_local"`
+	StartDateLocal     sql.NullString  `json:"start_date_local"`
 	Timezone           sql.NullString  `json:"timezone"`
 	AverageSpeed       sql.NullFloat64 `json:"average_speed"`
 	MaxSpeed           sql.NullFloat64 `json:"max_speed"`
@@ -56,9 +56,51 @@ type StravaActivity struct {
 	Visibility         sql.NullString  `json:"visibility"`
 	Flagged            sql.NullBool    `json:"flagged"`
 	GearID             sql.NullString  `json:"gear_id"`
+	Splits             sql.NullString  `json:"splits"`
 	MapSummary         sql.NullString  `json:"map_summary"`
 	CreatedAt          sql.NullTime    `json:"created_at"`
 	UpdatedAt          sql.NullTime    `json:"updated_at"`
+}
+
+type StravaLap struct {
+	ID                 int64           `json:"id"`
+	ActivityID         sql.NullInt64   `json:"activity_id"`
+	AthleteID          sql.NullInt64   `json:"athlete_id"`
+	AverageCadence     sql.NullFloat64 `json:"average_cadence"`
+	AverageSpeed       sql.NullFloat64 `json:"average_speed"`
+	AverageHeartrate   sql.NullFloat64 `json:"average_heartrate"`
+	MaxHeartrate       sql.NullFloat64 `json:"max_heartrate"`
+	Distance           sql.NullFloat64 `json:"distance"`
+	ElapsedTime        sql.NullInt32   `json:"elapsed_time"`
+	StartIndex         sql.NullInt32   `json:"start_index"`
+	EndIndex           sql.NullInt32   `json:"end_index"`
+	LapIndex           sql.NullInt32   `json:"lap_index"`
+	MaxSpeed           sql.NullFloat64 `json:"max_speed"`
+	MovingTime         sql.NullInt32   `json:"moving_time"`
+	Name               sql.NullString  `json:"name"`
+	PaceZone           sql.NullInt32   `json:"pace_zone"`
+	Split              sql.NullInt32   `json:"split"`
+	StartDate          sql.NullString  `json:"start_date"`
+	StartDateLocal     sql.NullString  `json:"start_date_local"`
+	TotalElevationGain sql.NullFloat64 `json:"total_elevation_gain"`
+	CreatedAt          sql.NullTime    `json:"created_at"`
+	UpdatedAt          sql.NullTime    `json:"updated_at"`
+}
+
+type StravaSegment struct {
+	ID               int64           `json:"id"`
+	ActivityID       sql.NullInt64   `json:"activity_id"`
+	ElapsedTime      sql.NullInt32   `json:"elapsed_time"`
+	StartDate        sql.NullString  `json:"start_date"`
+	StartDateLocal   sql.NullString  `json:"start_date_local"`
+	Distance         sql.NullFloat64 `json:"distance"`
+	MovingTime       sql.NullInt32   `json:"moving_time"`
+	StartIndex       sql.NullInt32   `json:"start_index"`
+	EndIndex         sql.NullInt32   `json:"end_index"`
+	AverageCadence   sql.NullFloat64 `json:"average_cadence"`
+	AverageWatts     sql.NullFloat64 `json:"average_watts"`
+	AverageHeartrate sql.NullFloat64 `json:"average_heartrate"`
+	MaxHeartrate     sql.NullFloat64 `json:"max_heartrate"`
 }
 
 type StravaToken struct {
@@ -73,20 +115,20 @@ type StravaToken struct {
 }
 
 type StravaUser struct {
-	ID        uuid.UUID      `json:"id"`
-	UserID    uuid.UUID      `json:"user_id"`
-	StravaID  int64          `json:"strava_id"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	Username  string         `json:"username"`
-	Firstname sql.NullString `json:"firstname"`
-	Lastname  sql.NullString `json:"lastname"`
-	City      sql.NullString `json:"city"`
-	State     sql.NullString `json:"state"`
-	Country   sql.NullString `json:"country"`
-	Sex       sql.NullString `json:"sex"`
-	Premuim   sql.NullBool   `json:"premuim"`
-	Weight    sql.NullInt32  `json:"weight"`
+	ID        uuid.UUID       `json:"id"`
+	UserID    uuid.UUID       `json:"user_id"`
+	StravaID  int64           `json:"strava_id"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
+	Username  string          `json:"username"`
+	Firstname sql.NullString  `json:"firstname"`
+	Lastname  sql.NullString  `json:"lastname"`
+	City      sql.NullString  `json:"city"`
+	State     sql.NullString  `json:"state"`
+	Country   sql.NullString  `json:"country"`
+	Sex       sql.NullString  `json:"sex"`
+	Premuim   sql.NullBool    `json:"premuim"`
+	Weight    sql.NullFloat64 `json:"weight"`
 }
 
 type User struct {

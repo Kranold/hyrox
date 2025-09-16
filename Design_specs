@@ -5,21 +5,24 @@ Iterations:
 - v2 store activity in db (done)
 - v3 ask chatGPT for feedback on activity (done)
 - v4 send activity to my email (done)
-- v5 Add a basic frontend for onboarding
-- v6 reduce technical debt
+- v5 reduce technical debt
+- v6 Add a basic frontend for onboarding (ask about birthday, fitness goal)
 - v7 deploy to web 
-- v8 send email on new activity
+- v8 send email on new activity (use webhooks)
 
 
 
 Technical to-dos: 
-- fix bug where it only fetches the first 30 activities from strava ()
-- Add segments data
-- create better prompt (asbjørn)
-- fix bug that creates new row in the refresh_token on every login
-- add front-end for user creation
-- implement application refresh tokens
+
+- Add more data (segments, splits and laps) (done)
+- fix bug that creates new row in the refresh_token on every login (done)
+- fix git ignore on api keys 
 - Add tests
 - Improve error handling 
 - Add logging
+
+Later 
 - add strava revoke 
+- add data streams from strava
+- implement application refresh tokens
+- fix bug where it only fetches the first activities from Strava

@@ -13,7 +13,7 @@ CREATE TABLE STRAVA_USER (
     country VARCHAR(100),
     sex CHAR(2),
     premuim BOOLEAN,
-    weight INTEGER
+    weight FLOAT
 );
 
 -- +goose down

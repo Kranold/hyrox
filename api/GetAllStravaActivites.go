@@ -22,6 +22,7 @@ func (cfg *APIConfig) GetAllStravaActivites(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Error fetching and saving strava activities", http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 
 }

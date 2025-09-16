@@ -45,18 +45,42 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Create and store a local refresh token
-	refreshToken := auth.MakeRefreshToken()
-	refreshTokenData, err := cfg.DB.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
-		UserID:    user.ID,
-		Token:     refreshToken,
-		ExpiresAt: time.Now().Add(expiryTime),
-	})
-	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Error creating refresh token", http.StatusInternalServerError)
-		return
+	currentTokenData, err := cfg.DB.GetRefreshToken(r.Context(), user.ID)
 
+	var refreshTokenData database.RefreshToken
+
+	if err != nil {
+		//Create and store a local refresh token
+		fmt.Printf("im here")
+		refreshTokenData, err = cfg.DB.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
+			UserID:    user.ID,
+			Token:     auth.MakeRefreshToken(),
+			ExpiresAt: time.Now().Add(expiryTime),
+		})
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "Error creating refresh token", http.StatusInternalServerError)
+			return
+
+		}
+
+	} else {
+
+		newTokenData := database.UpdateRefreshTokenParams{
+			Token:     auth.MakeRefreshToken(),
+			ExpiresAt: time.Now().Add(expiryTime),
+			UserID:    user.ID,
+			Token_2:   currentTokenData.Token,
+		}
+
+		refreshTokenData, err = cfg.DB.UpdateRefreshToken(r.Context(), newTokenData)
+
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "Error updating refresh token", http.StatusInternalServerError)
+			return
+
+		}
 	}
 
 	//preparing the response

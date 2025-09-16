@@ -23,17 +23,17 @@ RETURNING  id, user_id, strava_id, created_at, updated_at, username, firstname, 
 `
 
 type CreateStravaUserParams struct {
-	UserID    uuid.UUID      `json:"user_id"`
-	StravaID  int64          `json:"strava_id"`
-	Username  string         `json:"username"`
-	Firstname sql.NullString `json:"firstname"`
-	Lastname  sql.NullString `json:"lastname"`
-	City      sql.NullString `json:"city"`
-	State     sql.NullString `json:"state"`
-	Country   sql.NullString `json:"country"`
-	Sex       sql.NullString `json:"sex"`
-	Premuim   sql.NullBool   `json:"premuim"`
-	Weight    sql.NullInt32  `json:"weight"`
+	UserID    uuid.UUID       `json:"user_id"`
+	StravaID  int64           `json:"strava_id"`
+	Username  string          `json:"username"`
+	Firstname sql.NullString  `json:"firstname"`
+	Lastname  sql.NullString  `json:"lastname"`
+	City      sql.NullString  `json:"city"`
+	State     sql.NullString  `json:"state"`
+	Country   sql.NullString  `json:"country"`
+	Sex       sql.NullString  `json:"sex"`
+	Premuim   sql.NullBool    `json:"premuim"`
+	Weight    sql.NullFloat64 `json:"weight"`
 }
 
 func (q *Queries) CreateStravaUser(ctx context.Context, arg CreateStravaUserParams) (StravaUser, error) {

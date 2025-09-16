@@ -5,8 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Kranold/hyrox/internal/aiservice"
-	"github.com/Kranold/hyrox/internal/email"
-
+	email "github.com/Kranold/hyrox/internal/emailservice"
 	"github.com/google/uuid"
 )
 

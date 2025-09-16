@@ -81,26 +81,26 @@ WHERE users.id = $1
 `
 
 type GetUserByIDRow struct {
-	ID             uuid.UUID      `json:"id"`
-	Username       string         `json:"username"`
-	Email          string         `json:"email"`
-	CreatedAt      time.Time      `json:"created_at"`
-	UpdatedAt      time.Time      `json:"updated_at"`
-	HashedPassword sql.NullString `json:"hashed_password"`
-	ID_2           uuid.UUID      `json:"id_2"`
-	UserID         uuid.UUID      `json:"user_id"`
-	StravaID       int64          `json:"strava_id"`
-	CreatedAt_2    time.Time      `json:"created_at_2"`
-	UpdatedAt_2    time.Time      `json:"updated_at_2"`
-	Username_2     string         `json:"username_2"`
-	Firstname      sql.NullString `json:"firstname"`
-	Lastname       sql.NullString `json:"lastname"`
-	City           sql.NullString `json:"city"`
-	State          sql.NullString `json:"state"`
-	Country        sql.NullString `json:"country"`
-	Sex            sql.NullString `json:"sex"`
-	Premuim        sql.NullBool   `json:"premuim"`
-	Weight         sql.NullInt32  `json:"weight"`
+	ID             uuid.UUID       `json:"id"`
+	Username       string          `json:"username"`
+	Email          string          `json:"email"`
+	CreatedAt      time.Time       `json:"created_at"`
+	UpdatedAt      time.Time       `json:"updated_at"`
+	HashedPassword sql.NullString  `json:"hashed_password"`
+	ID_2           uuid.UUID       `json:"id_2"`
+	UserID         uuid.UUID       `json:"user_id"`
+	StravaID       int64           `json:"strava_id"`
+	CreatedAt_2    time.Time       `json:"created_at_2"`
+	UpdatedAt_2    time.Time       `json:"updated_at_2"`
+	Username_2     string          `json:"username_2"`
+	Firstname      sql.NullString  `json:"firstname"`
+	Lastname       sql.NullString  `json:"lastname"`
+	City           sql.NullString  `json:"city"`
+	State          sql.NullString  `json:"state"`
+	Country        sql.NullString  `json:"country"`
+	Sex            sql.NullString  `json:"sex"`
+	Premuim        sql.NullBool    `json:"premuim"`
+	Weight         sql.NullFloat64 `json:"weight"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (GetUserByIDRow, error) {

@@ -45,7 +45,7 @@ func (cfg *APIConfig) StravaTokenExchangeHandler(w http.ResponseWriter, r *http.
 		Country:   helperfunctions.ToNullString(tokenResponse.Athlete.Country),
 		Sex:       helperfunctions.ToNullString(tokenResponse.Athlete.Sex),
 		Premuim:   helperfunctions.ToNullBool(tokenResponse.Athlete.Premium),
-		Weight:    helperfunctions.ToNullInt32(int(tokenResponse.Athlete.Weight)),
+		//	Weight:    helperfunctions.ToNullInt32FromInt(tokenResponse.Athlete.Weight),
 	}
 
 	stravaUser, err := cfg.DB.CreateStravaUser(r.Context(), newStravaUserData)
