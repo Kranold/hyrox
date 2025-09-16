@@ -8,6 +8,7 @@ import (
 	"github.com/Kranold/hyrox/internal/auth"
 )
 
+// this is a fun comment
 func (cfg *APIConfig) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//get authorization header
