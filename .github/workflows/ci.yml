@@ -34,7 +34,23 @@ jobs:
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      
+      - name: Run formatting check
+        run: test -z $(go fmt ./...)
 
+      - name: Install staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@latest
+      
+      - name: Run staticcheck
+        run: staticcheck ./...
+
+  # Security: commented out for now untill issues have been fixed 
+  #    - name: Install gosec
+  #      run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+  #
+  #    - name: Run gosec
+  #      run: gosec ./...
+      
       - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h localhost -p 5432 -U user; do
@@ -53,4 +69,5 @@ jobs:
 
       - name: Run unit tests
         run: go test -cover ./...
+
 

@@ -9,10 +9,10 @@ Iterations:
 - v6 Add a basic frontend for onboarding (ask about birthday, fitness goal) (done)
 - v7 send email on new activity (use webhooks) (done)
 - v8 deploy to web 
-    - Setup CI file 
-    - linting/formatting  
-    - security
-    - tests
+    - Setup CI file (done)
+    - linting/formatting (done)   
+    - security (done)
+    - tests (done)
 - Deploy to web and add CD
     - create docker file
     - build binary
@@ -24,6 +24,7 @@ Iterations:
 Technical to-dos: 
 - refactor API to make it more DRY
 - Add more tests 
+- fix security issues found in gosec
 
 Later 
 - add strava revoke 
