@@ -7,3 +7,6 @@ VALUES (
 )
 RETURNING  *; 
 
+-- name: GetStravaUserByUserID :one
+SELECT * FROM strava_user
+WHERE user_id = $1;

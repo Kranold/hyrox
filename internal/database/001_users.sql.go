@@ -14,26 +14,36 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, username, email, hashed_password, created_at, updated_at)
+INSERT INTO users (id, username, email, hashed_password, fitness_goal,birthday, created_at, updated_at)
 VALUES (
     gen_random_uuid(),
     $1,
     $2,
     $3,
+    $4,
+    $5,
     NOW(),
     NOW()
 )
-RETURNING id, username, email, created_at, updated_at, hashed_password
+RETURNING id, username, email, created_at, updated_at, hashed_password, fitness_goal, birthday
 `
 
 type CreateUserParams struct {
 	Username       string         `json:"username"`
 	Email          string         `json:"email"`
 	HashedPassword sql.NullString `json:"hashed_password"`
+	FitnessGoal    sql.NullString `json:"fitness_goal"`
+	Birthday       sql.NullTime   `json:"birthday"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Email, arg.HashedPassword)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Username,
+		arg.Email,
+		arg.HashedPassword,
+		arg.FitnessGoal,
+		arg.Birthday,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -42,6 +52,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.FitnessGoal,
+		&i.Birthday,
 	)
 	return i, err
 }
@@ -55,8 +67,18 @@ func (q *Queries) DeleteAllUsers(ctx context.Context) error {
 	return err
 }
 
+const deleteUserByID = `-- name: DeleteUserByID :exec
+DELETE FROM users
+WHERE id = $1
+`
+
+func (q *Queries) DeleteUserByID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUserByID, id)
+	return err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, username, email, created_at, updated_at, hashed_password FROM users
+SELECT id, username, email, created_at, updated_at, hashed_password, fitness_goal, birthday FROM users
 WHERE email = $1
 `
 
@@ -70,12 +92,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.FitnessGoal,
+		&i.Birthday,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT users.id, users.username, email, users.created_at, users.updated_at, hashed_password, strava_user.id, user_id, strava_id, strava_user.created_at, strava_user.updated_at, strava_user.username, firstname, lastname, city, state, country, sex, premuim, weight FROM users
+SELECT users.id, users.username, email, users.created_at, users.updated_at, hashed_password, fitness_goal, birthday, strava_user.id, user_id, strava_id, strava_user.created_at, strava_user.updated_at, strava_user.username, firstname, lastname, city, state, country, sex, premuim, weight FROM users
 join STRAVA_USER on users.id = STRAVA_USER.user_id
 WHERE users.id = $1
 `
@@ -87,6 +111,8 @@ type GetUserByIDRow struct {
 	CreatedAt      time.Time       `json:"created_at"`
 	UpdatedAt      time.Time       `json:"updated_at"`
 	HashedPassword sql.NullString  `json:"hashed_password"`
+	FitnessGoal    sql.NullString  `json:"fitness_goal"`
+	Birthday       sql.NullTime    `json:"birthday"`
 	ID_2           uuid.UUID       `json:"id_2"`
 	UserID         uuid.UUID       `json:"user_id"`
 	StravaID       int64           `json:"strava_id"`
@@ -113,6 +139,8 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (GetUserByIDRow
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.FitnessGoal,
+		&i.Birthday,
 		&i.ID_2,
 		&i.UserID,
 		&i.StravaID,
@@ -127,6 +155,49 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (GetUserByIDRow
 		&i.Sex,
 		&i.Premuim,
 		&i.Weight,
+	)
+	return i, err
+}
+
+const getUserFromStravaID = `-- name: GetUserFromStravaID :one
+SELECT users.id, users.username, users.email, users.created_at, users.updated_at, users.hashed_password, users.fitness_goal, users.birthday FROM users
+join STRAVA_USER on users.id = STRAVA_USER.user_id
+WHERE STRAVA_USER.strava_id = $1
+`
+
+func (q *Queries) GetUserFromStravaID(ctx context.Context, stravaID int64) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserFromStravaID, stravaID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.HashedPassword,
+		&i.FitnessGoal,
+		&i.Birthday,
+	)
+	return i, err
+}
+
+const getUserbyUserID = `-- name: GetUserbyUserID :one
+SELECT id, username, email, created_at, updated_at, hashed_password, fitness_goal, birthday FROM users
+WHERE id = $1
+`
+
+func (q *Queries) GetUserbyUserID(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserbyUserID, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.HashedPassword,
+		&i.FitnessGoal,
+		&i.Birthday,
 	)
 	return i, err
 }

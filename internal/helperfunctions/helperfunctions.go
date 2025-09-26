@@ -1,6 +1,9 @@
 package helperfunctions
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 // ToNullString converts a string to sql.NullString
 func ToNullString(s string) sql.NullString {
@@ -41,4 +44,15 @@ func ToNullFloat64(f float64) sql.NullFloat64 {
 
 func ToNullBool(b bool) sql.NullBool {
 	return sql.NullBool{Bool: b, Valid: true}
+}
+
+func StringDateToDate(date string) sql.NullTime {
+	if date == "" {
+		return sql.NullTime{Time: sql.NullTime{}.Time, Valid: false}
+	}
+	t, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return sql.NullTime{Time: sql.NullTime{}.Time, Valid: false}
+	}
+	return sql.NullTime{Time: t, Valid: true}
 }

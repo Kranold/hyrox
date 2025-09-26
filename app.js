@@ -29,10 +29,11 @@ loginForm.addEventListener('submit', async (event) => {
 
       // Optionally, store the JWT in localStorage or cookies
       localStorage.setItem('jwt', data.jwt);
-
+    if (data.HasStravaLinkedAccount) {
       // Redirect to another page (e.g., dashboard)
       redirectUrl = "http://localhost:8080/strava_token_exchange" + "?token=" + data.jwt
       window.location.href = 'http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri='+redirectUrl+'&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all';
+    }
     } else {
       // Handle login errors
       const errorData = await response.json();

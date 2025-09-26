@@ -3,8 +3,9 @@ package aiservice
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"runtime/debug"
 
+	"github.com/Kranold/hyrox/internal/logging"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"google.golang.org/genai"
@@ -12,12 +13,15 @@ import (
 
 func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string, error) {
 	godotenv.Load()
-
+	logger := logging.CreateLogger()
 	// Fetch user data and activities from Strava
 
 	userActivities, err := cfg.DB.GetStravaActivitiesByUserID(ctx, userid)
+
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error fetching user activities",
+			"userID", userid.String(),
+			"Error", err.Error())
 		return "", err
 	}
 	userData, _ := cfg.DB.GetUserByID(ctx, userid)
@@ -52,7 +56,8 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 
 	client, err := genai.NewClient(ctx, nil)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error creating Gemini client in AICoaching",
+			"Error", err.Error())
 		return "", err
 	}
 
@@ -63,8 +68,15 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 		nil,
 	)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error generating content with Gemini model",
+			"error", err.Error(),
+			"stacktrace", string(debug.Stack()),
+			"context_error", ctx.Err().Error())
+		return "", err
 	}
 	res := result.Text()[7 : len(result.Text())-3]
+
+	logger.Info("AI Coaching generated successfully",
+		"userID", userid.String())
 	return res, nil
 }

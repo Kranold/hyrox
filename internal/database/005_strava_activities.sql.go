@@ -460,3 +460,14 @@ func (q *Queries) GetStravaActivitiesByUserID(ctx context.Context, userID uuid.U
 	}
 	return items, nil
 }
+
+const getStravaActivityByID = `-- name: GetStravaActivityByID :one
+SELECT id FROM strava_activities
+WHERE id = $1
+`
+
+func (q *Queries) GetStravaActivityByID(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getStravaActivityByID, id)
+	err := row.Scan(&id)
+	return id, err
+}

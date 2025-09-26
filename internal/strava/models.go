@@ -71,7 +71,7 @@ type StravaActivity struct {
 	MapSummary         string    `json:"map_summary"`
 	CreatedAt          string    `json:"created_at"` // ISO 8601 format
 	UpdatedAt          string    `json:"updated_at"` // ISO 8601 format
-	//Splits             string          `json:"splits_metric"`
+	//	Splits             string          `json:"splits_metric"`
 	Segments []StravaSegment `json:"segment_efforts"`
 	Laps     []StravaLap     `json:"laps"`
 }
@@ -123,4 +123,14 @@ type StravaLap struct {
 	StartDate          string   `json:"start_date"`
 	StartDateLocal     string   `json:"start_date_local"`
 	TotalElevationGain float64  `json:"total_elevation_gain"`
+}
+
+type StravaEventHookParameters struct {
+	ObjectType string `json:"object_type"`
+	ObjectID   int64  `json:"object_id"`
+	AspectType string `json:"aspect_type"`
+	//	Updates        string `json:"updates"`
+	OwnerID        int64 `json:"owner_id"`
+	SubscriptionID int64 `json:"subscription_id"`
+	EventTime      int64 `json:"event_time"`
 }

@@ -5,21 +5,25 @@ Iterations:
 - v2 store activity in db (done)
 - v3 ask chatGPT for feedback on activity (done)
 - v4 send activity to my email (done)
-- v5 reduce technical debt
-- v6 Add a basic frontend for onboarding (ask about birthday, fitness goal)
-- v7 deploy to web 
-- v8 send email on new activity (use webhooks)
-
-
+- v5 reduce technical debt (done)
+- v6 Add a basic frontend for onboarding (ask about birthday, fitness goal) (done)
+- v7 send email on new activity (use webhooks) (done)
+- v8 deploy to web 
+    - Setup CI file 
+    - linting/formatting  
+    - security
+    - tests
+- Deploy to web and add CD
+    - create docker file
+    - build binary
+    - build and publsh docker image 
+    - connect to postgres
+    - run migrations
+    - Autodeploy docker image 
 
 Technical to-dos: 
-
-- Add more data (segments, splits and laps) (done)
-- fix bug that creates new row in the refresh_token on every login (done)
-- fix git ignore on api keys 
-- Add tests
-- Improve error handling 
-- Add logging
+- refactor API to make it more DRY
+- Add more tests 
 
 Later 
 - add strava revoke 

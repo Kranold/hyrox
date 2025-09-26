@@ -83,24 +83,36 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	_, err = cfg.DB.GetStravaUserByUserID(r.Context(), user.ID)
+
+	hasStravaLinkedAccount := false
+
+	if err == nil {
+		hasStravaLinkedAccount = true
+	}
+
 	//preparing the response
 	type respData struct {
-		JWT          string                `json:"jwt"`
-		RefreshToken database.RefreshToken `json:"refresh_token"`
-		User         database.User         `json:"user"`
+		JWT                    string                `json:"jwt"`
+		RefreshToken           database.RefreshToken `json:"refresh_token"`
+		HasStravaLinkedAccount bool                  `json:"has_strava_linked_account"`
+		User                   database.User         `json:"user"`
 	}
 
 	userRespData := database.User{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		ID:          user.ID,
+		Username:    user.Username,
+		Email:       user.Email,
+		FitnessGoal: user.FitnessGoal,
+		Birthday:    user.Birthday,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
 	}
 	responseData := respData{
-		JWT:          jwtToken,
-		RefreshToken: refreshTokenData,
-		User:         userRespData,
+		JWT:                    jwtToken,
+		RefreshToken:           refreshTokenData,
+		HasStravaLinkedAccount: hasStravaLinkedAccount,
+		User:                   userRespData,
 	}
 
 	data, err := json.Marshal(responseData)

@@ -69,3 +69,30 @@ func (q *Queries) CreateStravaUser(ctx context.Context, arg CreateStravaUserPara
 	)
 	return i, err
 }
+
+const getStravaUserByUserID = `-- name: GetStravaUserByUserID :one
+SELECT id, user_id, strava_id, created_at, updated_at, username, firstname, lastname, city, state, country, sex, premuim, weight FROM strava_user
+WHERE user_id = $1
+`
+
+func (q *Queries) GetStravaUserByUserID(ctx context.Context, userID uuid.UUID) (StravaUser, error) {
+	row := q.db.QueryRowContext(ctx, getStravaUserByUserID, userID)
+	var i StravaUser
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.StravaID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Username,
+		&i.Firstname,
+		&i.Lastname,
+		&i.City,
+		&i.State,
+		&i.Country,
+		&i.Sex,
+		&i.Premuim,
+		&i.Weight,
+	)
+	return i, err
+}

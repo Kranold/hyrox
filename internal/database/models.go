@@ -138,4 +138,6 @@ type User struct {
 	CreatedAt      time.Time      `json:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"`
 	HashedPassword sql.NullString `json:"hashed_password"`
+	FitnessGoal    sql.NullString `json:"fitness_goal"`
+	Birthday       sql.NullTime   `json:"birthday"`
 }

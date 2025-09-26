@@ -2,12 +2,15 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/Kranold/hyrox/api"
 	"github.com/Kranold/hyrox/internal/database"
+	"github.com/Kranold/hyrox/internal/logging"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -15,10 +18,13 @@ import (
 func main() {
 	godotenv.Load()
 
+	logger := logging.CreateLogger()
+
 	dbURL := os.Getenv("DB_URL")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatalf("Error connecting to the database: %v", err)
+		logger.Error("Error connecting to the database", slog.String("Error", err.Error()))
+		log.Fatalf("Error connecting to the database, shutting down application")
 	}
 	dbQueries := database.New(db)
 
@@ -36,13 +42,18 @@ func main() {
 	mux.Handle("/get_coaching", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetCoaching)))
 	mux.Handle("/send_coaching_email", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.SendCoachingEmail)))
 
+	mux.HandleFunc("/strava_webhook_create", apiCfg.CreateStravaWebhookSubscription)
+	mux.HandleFunc("GET /validate_strava_subscription", apiCfg.ValidateStravaWebhookSubscription)
+	mux.HandleFunc("POST /validate_strava_subscription", apiCfg.StravaWebhookHandler)
+
 	muxHandlerWithCORS := api.CORSMiddleware(mux)
 	port := "8080"
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: muxHandlerWithCORS,
 	}
-	log.Printf("Starting on port: %s\n", port)
+
+	logger.Info(fmt.Sprintf("Starting on port: %s\n", port))
 	log.Fatal(server.ListenAndServe())
 
 }

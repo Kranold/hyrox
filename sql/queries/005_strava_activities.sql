@@ -58,3 +58,7 @@ LEFT JOIN strava_segments ss on ss.activity_id = sa.id
 LEFT JOIN strava_laps sl on sl.activity_id = sa.id
 JOIN strava_user su ON su.strava_id = sa.athlete_id
 WHERE su.user_id  = $1;
+
+-- name: GetStravaActivityByID :one
+SELECT id FROM strava_activities
+WHERE id = $1;
