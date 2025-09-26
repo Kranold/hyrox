@@ -44,6 +44,9 @@ jobs:
 
       - name: 'Install goose'
         run: 'go install github.com/pressly/goose/v3/cmd/goose@latest'
+      
+      - name: Make migrateup.sh executable
+        run: chmod +x scripts/migrateup.sh
 
       - name: Create tables
         run: './scripts/migrateup.sh'
