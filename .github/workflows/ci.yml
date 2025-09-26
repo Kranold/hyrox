@@ -42,7 +42,7 @@ jobs:
             sleep 2;
           done
 
-     - name: 'Install goose'
+      - name: 'Install goose'
         run: 'go install github.com/pressly/goose/v3/cmd/goose@latest'
 
       - name: Create tables
