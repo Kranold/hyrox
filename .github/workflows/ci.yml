@@ -11,7 +11,7 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     env:
-      DB_URL: "postgres://user:password@localhost:5432/testdb?sslmode=disable"
+      DB_URL: postgres://user:password@localhost:5432/testdb?sslmode=disable
 
     services:
       postgres:

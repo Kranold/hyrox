@@ -13,7 +13,6 @@ import (
 
 	"github.com/Kranold/hyrox/internal/database"
 	"github.com/Kranold/hyrox/internal/logging"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -47,10 +46,10 @@ func TestCreateUser(t *testing.T) {
 
 	logger := logging.CreateLogger()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+	/*	err := godotenv.Load()
+		if err != nil {
+			log.Fatalf("Error loading .env file: %v", err)
+		}*/
 	dbURL := os.Getenv("DB_URL")
 
 	db, err := sql.Open("postgres", dbURL)
