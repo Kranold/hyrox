@@ -10,6 +10,8 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    env:
+      DB_URL: "postgres://user:password@localhost:5432/testdb?sslmode=disable"
 
     services:
       postgres:
@@ -42,7 +44,5 @@ jobs:
 
 
       - name: Run unit tests
-        env:
-          DB_URL: "postgres://user:password@localhost:5432/testdb?sslmode=disable"
         run: go test -cover ./...
 
