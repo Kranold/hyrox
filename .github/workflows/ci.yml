@@ -11,6 +11,16 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          -8080:8080
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testdb
+
     steps: 
       - name: Check out the code
         uses: actions/checkout@v4
@@ -19,7 +29,17 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "stable"
+
+      - name: Wait for PostgresSQL to be ready
+       run: |
+          until pg_isready -h localhost -p 8080 -U testuser; do
+            echo "Waiting for PostgreSQL...";
+            sleep 2;
+          done
+        
       
       - name: Run unit tests
+        env:
+          DB_URL: "postgres://user:password@localhost:8080/testdb?sslmode=disable"
         run: go test -cover ./...
 
