@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
       height: 100vh;
       margin: 0;
     }
+
     .createUser-container {
       background: #fff;
       padding: 20px;
@@ -21,10 +23,12 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       width: 300px;
     }
+
     .createUser-container h2 {
       margin: 0 0 20px;
       text-align: center;
     }
+
     .createUser-container input {
       width: 100%;
       padding: 10px;
@@ -32,6 +36,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
     .createUser-container button {
       width: 100%;
       padding: 10px;
@@ -41,9 +46,11 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .createUser-container button:hover {
       background-color: #0056b3;
     }
+
     .error {
       color: red;
       font-size: 0.9em;
@@ -52,6 +59,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="createUser-container">
     <h2>Sign up</h2>
@@ -59,14 +67,15 @@
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
       <input type="username" id="username" placeholder="Username" required />
-      <textarea id="yourFitnessGoal" placeholder="Your Fitness Goal" required ></textarea>
+      <textarea id="yourFitnessGoal" placeholder="Your Fitness Goal" required></textarea>
       <input type="date" id="birthday" placeholder="Your birthday" required />
       <button type="submit">Create user</button>
     </form>
-    <a href="./index.html" id="goToLogin">Go to login page</button>
-    <div class="error" id="errorMessage"></div>
+    <a href="./" id="goToLogin">Go to login page</button>
+      <div class="error" id="errorMessage"></div>
   </div>
 
   <script src="createUserApp.js"></script>
 </body>
+
 </html>
