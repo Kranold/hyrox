@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
       height: 100vh;
       margin: 0;
     }
+
     .login-container {
       background: #fff;
       padding: 20px;
@@ -21,10 +23,12 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       width: 300px;
     }
+
     .login-container h2 {
       margin: 0 0 20px;
       text-align: center;
     }
+
     .login-container input {
       width: 100%;
       padding: 10px;
@@ -32,6 +36,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
     .login-container button {
       width: 100%;
       padding: 10px;
@@ -41,9 +46,11 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .login-container button:hover {
       background-color: #0056b3;
     }
+
     .error {
       color: red;
       font-size: 0.9em;
@@ -52,6 +59,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="login-container">
     <h2>Login</h2>
@@ -60,10 +68,11 @@
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Login</button>
     </form>
-    <a href="./createUserPage.html" id="goToUserCreate">Go to sign up</button>
-    <div class="error" id="errorMessage"></div>
+    <a href="./createUserPage" id="goToUserCreate">Go to sign up</button>
+      <div class="error" id="errorMessage"></div>
   </div>
 
   <script src="app.js"></script>
 </body>
+
 </html>
