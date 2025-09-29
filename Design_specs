@@ -16,10 +16,9 @@ Iterations:
 - Deploy to web and add CD
     - build binary for linus w amd64  (done)
     - create docker file (done)
-    - build and publish docker image 
+    - build and publish docker image automatically
     - connect to cloud postgres
     - run migrations on deploy
-    - Autodeploy docker image 
 
 Technical to-dos: 
 - refactor API to make it more DRY
