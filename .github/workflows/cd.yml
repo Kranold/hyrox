@@ -31,6 +31,9 @@ jobs:
 
       - name: 'Set GCP Project'
         run: 'gcloud config set project hyrox-473608'
+      
+      - name: 'Use gcloud CLI'
+        run: 'gcloud builds submit --tag europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest'
 
 ##      - name: 'Install goose'
 ##        run: 'go install github.com/pressly/goose/v3/cmd/goose@latest'
