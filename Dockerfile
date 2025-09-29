@@ -1,13 +1,7 @@
-# Stage 1: Building the Go application 
-FROM golang:latest AS builder
+FROM --platform=linux/amd64 debian:stable-slim
 
-WORKDIR /app
+RUN apt-get update && apt-get install -y ca-certificates
 
+ADD hyrox /usr/bin/hyrox
 
-# Use a lightweight debian os
-# as the base image
-FROM debian:stable-slim
-
-# execute the 'echo "hello world"'
-# command when the container runs
-CMD ["echo", "hello world"]
+CMD ["hyrox"]

@@ -14,17 +14,18 @@ Iterations:
     - security (done)
     - tests (done)
 - Deploy to web and add CD
-    - create docker file
-    - build binary
-    - build and publsh docker image 
-    - connect to postgres
-    - run migrations
+    - build binary for linus w amd64  (done)
+    - create docker file (done)
+    - build and publish docker image 
+    - connect to cloud postgres
+    - run migrations on deploy
     - Autodeploy docker image 
 
 Technical to-dos: 
 - refactor API to make it more DRY
 - Add more tests 
 - fix security issues found in gosec
+- add AI code review to CI pipeline
 
 Later 
 - add strava revoke 

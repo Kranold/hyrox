@@ -34,6 +34,12 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
+
+	// serving the front-end
+	fs := http.FileServer(http.Dir("./static"))
+	mux.Handle("/", fs)
+
+	// serving API calls
 	mux.HandleFunc("/create_user", apiCfg.CreateUser)
 	mux.Handle("/getactivities", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetAllStravaActivites)))
 	mux.HandleFunc("/strava_token_exchange", apiCfg.StravaTokenExchangeHandler)
