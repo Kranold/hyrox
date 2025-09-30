@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -15,12 +16,7 @@ import (
 func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 	logger := logging.CreateLogger()
 
-	if r.Method != http.MethodPost {
-		logger.Error("Invalid request method",
-			slog.String("Method", r.Method))
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
+	fmt.Println(cfg.DB)
 
 	// Parse the JSON request body
 	type parameters struct {
