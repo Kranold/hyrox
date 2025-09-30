@@ -44,27 +44,10 @@ jobs:
       - name: 'Install goose'
         run: 'go install github.com/pressly/goose/v3/cmd/goose@latest'
       
-      - name: Download Cloud SQL Proxy
-        run: |
-          curl -o cloud-sql-proxy https://dl.google.com/cloudsql/cloud-sql-proxy.linux.amd64
-          chmod +x cloud-sql-proxy
-      
-      - name: Create Cloud SQL Socket Directory
-        run: |
-          sudo mkdir -p /cloudsql
-          sudo chmod 777 /cloudsql    
-        
-      # Step 2: Run Cloud SQL Proxy
-      - name: Start Cloud SQL Proxy
-        run: |
-          ./cloud-sql-proxy ${{ secrets.GCLOUD_POSTGRES_CONNECTION_NAME }} --port=5432 --unix-socket=/cloudsql &
-      
-      # Step 3: Wait for Cloud SQL Proxy to start
-      - name: Wait for Cloud SQL Proxy
-        run: sleep 5
+      - name: 'Deploy to Cloud Run'
+        run: 'gcloud run deploy hyrox --image europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest --region europe-north2 --project hyrox-473608  --add-cloudsql-instances hyrox-473608:europe-north2:hyrox --allow-unauthenticated --max-instances=4'
+
 
       - name: "Run migrations"
         run: './scripts/migrateup.sh'
 
-      - name: 'Deploy to Cloud Run'
-        run: 'gcloud run deploy hyrox --image europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest --region europe-north2 --project hyrox-473608 --allow-unauthenticated --max-instances=4'
