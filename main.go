@@ -44,10 +44,10 @@ func main() {
 	})
 
 	// serving API calls
-	mux.HandleFunc("/create_user", apiCfg.CreateUser)
+	mux.HandleFunc("POST /create_user", apiCfg.CreateUser)
 	mux.Handle("/getactivities", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetAllStravaActivites)))
 	mux.HandleFunc("/strava_token_exchange", apiCfg.StravaTokenExchangeHandler)
-	mux.HandleFunc("/delete_users", apiCfg.DeleteAllUsers)
+	mux.HandleFunc("POST /delete_users", apiCfg.DeleteAllUsers)
 	mux.HandleFunc("/login", apiCfg.Login)
 	mux.Handle("/get_coaching", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetCoaching)))
 	mux.Handle("/send_coaching_email", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.SendCoachingEmail)))

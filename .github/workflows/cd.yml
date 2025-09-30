@@ -45,8 +45,7 @@ jobs:
         run: 'go install github.com/pressly/goose/v3/cmd/goose@latest'
       
       - name: 'Deploy to Cloud Run'
-        run: 'gcloud run deploy hyrox --image europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest --region europe-north2 --project hyrox-473608  --add-cloudsql-instances hyrox-473608:europe-north2:hyrox --allow-unauthenticated --max-instances=4'
-
+        run: 'gcloud run deploy hyrox --image europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest --region europe-north2 --project hyrox-473608  --allow-unauthenticated --max-instances=4'
 
       - name: "Run migrations"
         run: './scripts/migrateup.sh'

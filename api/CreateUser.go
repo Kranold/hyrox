@@ -27,7 +27,7 @@ func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&newUser)
 	if err != nil {
-		logger.Error("Error decoding request body when",
+		logger.Error("Error decoding request body",
 			slog.String("Error", err.Error()))
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
