@@ -55,7 +55,7 @@ jobs:
               GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}", \
               JWTSECRET= "${{ secrets.JWTSECRET }}", \
               SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }}", \
-              STRAVA_CLIENT_ID="${{ secrets.STRAVA_CLIENT_ID }}", \
+              STRAVA_CLIENT_ID="${{ secrets.STRAVA_CLIENT_ID }}" \
             --allow-unauthenticated \
             --max-instances=4
 
