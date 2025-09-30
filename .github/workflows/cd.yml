@@ -48,7 +48,12 @@ jobs:
         run: |
           curl -o cloud-sql-proxy https://dl.google.com/cloudsql/cloud-sql-proxy.linux.amd64
           chmod +x cloud-sql-proxy
-
+      
+      - name: Create Cloud SQL Socket Directory
+        run: |
+          sudo mkdir -p /cloudsql
+          sudo chmod 777 /cloudsql    
+        
       # Step 2: Run Cloud SQL Proxy
       - name: Start Cloud SQL Proxy
         run: |
