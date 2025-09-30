@@ -15,7 +15,7 @@ createUserForm.addEventListener('submit', async (event) => {
 
   try {
     // Send a POST request to the backend login endpoint
-    const response = await fetch('http://localhost:8080/create_user', {
+    const response = await fetch('https://hyrox-601006340303.europe-north2.run.app/create_user', {
       method: 'POST',
       //   credentials: 'include',
       headers: {
@@ -32,7 +32,7 @@ createUserForm.addEventListener('submit', async (event) => {
     }
 
     // Send a POST request to the backend login endpoint
-    const loginResponse = await fetch('http://localhost:8080/login', {
+    const loginResponse = await fetch('https://hyrox-601006340303.europe-north2.run.app/login', {
       method: 'POST',
       //   credentials: 'include',
       headers: {
@@ -47,7 +47,7 @@ createUserForm.addEventListener('submit', async (event) => {
       //    localStorage.setItem('jwt', data.jwt);
       // ADD CHECK IF USER IS CONNECTED to STRAVA 
       // Redirect to another page (e.g., dashboard)
-      redirectUrl = "http://localhost:8080/strava_token_exchange" + "?token=" + loginData.jwt
+      redirectUrl = "https://hyrox-601006340303.europe-north2.run.app/strava_token_exchange" + "?token=" + loginData.jwt
       window.location.href = 'http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri=' + redirectUrl + '&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all';
 
 
