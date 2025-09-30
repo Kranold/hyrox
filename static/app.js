@@ -14,7 +14,7 @@ loginForm.addEventListener('submit', async (event) => {
     // Send a POST request to the backend login endpoint
     const response = await fetch('http://localhost:8080/login', {
       method: 'POST',
-  //   credentials: 'include',
+      //   credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -24,16 +24,14 @@ loginForm.addEventListener('submit', async (event) => {
     // Check if the login was successful
     if (response.ok) {
       const data = await response.json();
-      alert('Login successful!'); // Notify the user
-      console.log('JWT:', data.jwt); // Log the JWT for debugging
 
       // Optionally, store the JWT in localStorage or cookies
       localStorage.setItem('jwt', data.jwt);
-    if (data.HasStravaLinkedAccount) {
-      // Redirect to another page (e.g., dashboard)
-      redirectUrl = "http://localhost:8080/strava_token_exchange" + "?token=" + data.jwt
-      window.location.href = 'http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri='+redirectUrl+'&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all';
-    }
+      if (data.HasStravaLinkedAccount) {
+        // Redirect to another page (e.g., dashboard)
+        redirectUrl = "http://localhost:8080/strava_token_exchange" + "?token=" + data.jwt
+        window.location.href = 'http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri=' + redirectUrl + '&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all';
+      }
     } else {
       // Handle login errors
       const errorData = await response.json();

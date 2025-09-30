@@ -37,10 +37,10 @@ func main() {
 
 	// serving the front-end
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./static/index.html")
+		http.ServeFile(w, r, "./app/static/index.html")
 	})
 	mux.HandleFunc("/createUserPage", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./static/createUserPage.html")
+		http.ServeFile(w, r, "./app/static/createUserPage.html")
 	})
 
 	// serving API calls
@@ -57,7 +57,7 @@ func main() {
 	mux.HandleFunc("POST /validate_strava_subscription", apiCfg.StravaWebhookHandler)
 
 	muxHandlerWithCORS := api.CORSMiddleware(mux)
-	port := "8080"
+	port := os.Getenv("PORT")
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: muxHandlerWithCORS,
