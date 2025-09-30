@@ -44,13 +44,22 @@ jobs:
       - name: 'Install goose'
         run: 'go install github.com/pressly/goose/v3/cmd/goose@latest'
       
+      - name: 'Generate Environment Variables File'
+        run: |
+          echo "DB_URL: ${{ secrets.DB_URL }}" >> env.yaml
+          echo "GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}" >> env.yaml
+          echo "JWTSECRET: ${{ secrets.JWTSECRET }}" >> env.yaml
+          echo "SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}" >> env.yaml
+          echo "STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}" >> env.yaml
+
+      
       - name: 'Deploy to Cloud Run'
         run: |
           gcloud run deploy hyrox \
             --image europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest \
             --region europe-north2 \
             --project hyrox-473608 \
-            --set-env-vars DB_URL="${{ secrets.DB_URL }}",GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}",JWTSECRET="${{ secrets.JWTSECRET }}",SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }}",STRAVA_CLIENT_ID="${{ secrets.STRAVA_CLIENT_ID }}" \
+            --env-vars-file env.yaml \
             --allow-unauthenticated \
             --max-instances=4
 
