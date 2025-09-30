@@ -17,40 +17,40 @@ createUserForm.addEventListener('submit', async (event) => {
     // Send a POST request to the backend login endpoint
     const response = await fetch('http://localhost:8080/create_user', {
       method: 'POST',
-  //   credentials: 'include',
+      //   credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password,username, fitnessGoal, birthday }),
+      body: JSON.stringify({ email, password, username, fitnessGoal, birthday }),
     });
 
     // Check if the login was successful
     if (response.ok) {
       const creationData = await response.json();
-      console.log("userData",creationData);
+      console.log("userData", creationData);
 
     }
 
-      // Send a POST request to the backend login endpoint
-      const loginResponse = await fetch('http://localhost:8080/login', {
-        method: 'POST',
-               //   credentials: 'include',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              body: JSON.stringify({ email, password}),
-        });
+    // Send a POST request to the backend login endpoint
+    const loginResponse = await fetch('http://localhost:8080/login', {
+      method: 'POST',
+      //   credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
     if (loginResponse.ok) {
-          const loginData = await loginResponse.json();
-          console.log("loginData",loginData);// Log the JWT for debugging
-          // Optionally, store the JWT in localStorage or cookies
+      const loginData = await loginResponse.json();
+      console.log("loginData", loginData);// Log the JWT for debugging
+      // Optionally, store the JWT in localStorage or cookies
       //    localStorage.setItem('jwt', data.jwt);
-  // ADD CHECK IF USER IS CONNECTED to STRAVA 
-           // Redirect to another page (e.g., dashboard)
-            redirectUrl = "http://localhost:8080/strava_token_exchange" + "?token=" + loginData.jwt
-             window.location.href = 'http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri='+redirectUrl+'&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all';
+      // ADD CHECK IF USER IS CONNECTED to STRAVA 
+      // Redirect to another page (e.g., dashboard)
+      redirectUrl = "http://localhost:8080/strava_token_exchange" + "?token=" + loginData.jwt
+      window.location.href = 'http://www.strava.com/oauth/authorize?client_id=174704&response_type=code&redirect_uri=' + redirectUrl + '&approval_prompt=force&scope=read,read_all,activity:read,profile:read_all';
 
-    
+
     } else {
       // Handle login errors
       const errorData = await response.json();

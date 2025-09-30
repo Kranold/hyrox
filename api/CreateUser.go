@@ -14,6 +14,14 @@ import (
 
 func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 	logger := logging.CreateLogger()
+
+	if r.Method != http.MethodPost {
+		logger.Error("Invalid request method",
+			slog.String("Method", r.Method))
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
 	// Parse the JSON request body
 	type parameters struct {
 		Email       string `json:"email"`
