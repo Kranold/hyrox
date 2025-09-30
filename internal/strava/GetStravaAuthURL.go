@@ -7,7 +7,7 @@ import (
 
 func GetStravaAuthURL() string {
 	scopes := "read,read_all,activity:read,profile:read_all"
-	redirectURL := "http://localhost:8080/strava_token_exchange"
+	redirectURL := "https://hyrox-601006340303.europe-north2.run.app/strava_token_exchange"
 	clientID := os.Getenv("STRAVA_CLIENT_ID")
 	url := fmt.Sprintf(
 		"http://www.strava.com/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&approval_prompt=force&scope=%s",

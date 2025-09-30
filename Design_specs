@@ -19,6 +19,8 @@ Technical to-dos:
 - Add more tests 
 - fix security issues found in gosec
 - add AI code review to CI pipeline
+- clean up naming and delete functions in strava package
+
 
 Later 
 - add strava revoke 
