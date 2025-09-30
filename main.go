@@ -36,12 +36,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	// serving the front-end
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./app/static/index.html")
-	})
-	mux.HandleFunc("/createUserPage", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./app/static/createUserPage.html")
-	})
+
+	mux.Handle("/", http.FileServer(http.Dir("./static")))
 
 	// serving API calls
 	mux.HandleFunc("/create_user", apiCfg.CreateUser)
