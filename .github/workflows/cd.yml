@@ -57,7 +57,7 @@ jobs:
       # Step 2: Run Cloud SQL Proxy
       - name: Start Cloud SQL Proxy
         run: |
-          ./cloud-sql-proxy ${{ secrets.GCLOUD_POSTGRES_CONNECTION_NAME }} --port=5432 &
+          ./cloud-sql-proxy ${{ secrets.GCLOUD_POSTGRES_CONNECTION_NAME }} --port=5432 --unix-socket=/cloudsql &
       
       # Step 3: Wait for Cloud SQL Proxy to start
       - name: Wait for Cloud SQL Proxy
