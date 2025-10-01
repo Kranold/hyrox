@@ -8,22 +8,25 @@ Iterations:
 - v5 reduce technical debt (done)
 - v6 Add a basic frontend for onboarding (ask about birthday, fitness goal) (done)
 - v7 send email on new activity (use webhooks) (done)
-- v8 deploy to web 
-- Deploy to web and add CD
-    - connect to cloud postgres
-    - run migrations on deploy
+- v8 deploy to web (done)
+- v9 Create a nicely formatted email 
+- v10 Add a welcome email on sign up
+- v11 Integrate data from hevy 
+
 
 
 Technical to-dos: 
-- refactor API to make it more DRY
+- clean up naming and delete functions in strava package
+- refactor API with helper function to make it more DRY
 - Add more tests 
 - fix security issues found in gosec
 - add AI code review to CI pipeline
-- clean up naming and delete functions in strava package
-
+- Do i need godotenv.Load() whenever i need an env variable?
 
 Later 
 - add strava revoke 
 - add data streams from strava
 - implement application refresh tokens
-- fix bug where it only fetches the first activities from Strava
+- Create a test strava account, that can also handle integration tests
+
+

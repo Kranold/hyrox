@@ -42,7 +42,7 @@ createUserForm.addEventListener('submit', async (event) => {
     });
     if (loginResponse.ok) {
       const loginData = await loginResponse.json();
-      console.log("loginData", loginData);// Log the JWT for debugging
+      // Log the JWT for debugging
       // Optionally, store the JWT in localStorage or cookies
       //    localStorage.setItem('jwt', data.jwt);
       // ADD CHECK IF USER IS CONNECTED to STRAVA 

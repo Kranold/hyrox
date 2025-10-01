@@ -36,7 +36,6 @@ func main() {
 	mux := http.NewServeMux()
 
 	// serving the front-end
-
 	mux.Handle("/", http.FileServer(http.Dir("./static")))
 
 	// serving API calls
