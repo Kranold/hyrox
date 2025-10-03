@@ -23,8 +23,9 @@ func (cfg *APIConfig) CreateStravaWebhookSubscription(w http.ResponseWriter, r *
 	logger := logging.CreateLogger()
 	godotenv.Load()
 
+	client := &http.Client{}
 	// Check existing subscription
-	subscription, err := strava.GetSubscription()
+	subscription, err := strava.GetSubscription(client)
 	// if not subscription create one and return
 	if err != nil {
 		logger.Error("Error getting strava webhook subscription",
@@ -33,7 +34,7 @@ func (cfg *APIConfig) CreateStravaWebhookSubscription(w http.ResponseWriter, r *
 		return
 	}
 	if subscription.ID == 0 {
-		err = strava.CreateSubscription()
+		err = strava.CreateSubscription(client)
 		if err != nil {
 			logger.Error("Error creating strava webhook subscription",
 				slog.String("Error", err.Error()))
@@ -55,14 +56,14 @@ func (cfg *APIConfig) CreateStravaWebhookSubscription(w http.ResponseWriter, r *
 	}
 
 	// if they are different delete and create a new one
-	err = strava.DeleteSubscription(subscription.ID)
+	err = strava.DeleteSubscription(client, subscription.ID)
 	if err != nil {
 		logger.Error("Error delete strava webhook subscription",
 			slog.String("Error", err.Error()))
 		http.Error(w, "Error delete strava webhook subscription", http.StatusInternalServerError)
 		return
 	}
-	err = strava.CreateSubscription()
+	err = strava.CreateSubscription(client)
 	if err != nil {
 		logger.Error("Error creating strava webhook subscription",
 			slog.String("Error", err.Error()))

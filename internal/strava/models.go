@@ -4,6 +4,8 @@ import (
 	"github.com/Kranold/hyrox/internal/database"
 )
 
+var StravaAPIDomain = "https://www.strava.com/api/v3"
+
 type StravaService struct {
 	DB database.Queries
 }

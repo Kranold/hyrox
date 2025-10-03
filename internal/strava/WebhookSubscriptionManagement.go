@@ -22,11 +22,11 @@ type StravaSubscription struct {
 	Domain        string
 }
 
-func GetSubscription() (StravaSubscription, error) {
+func GetSubscription(client *http.Client) (StravaSubscription, error) {
 	godotenv.Load()
 	logger := logging.CreateLogger()
 
-	requestDomain := "https://www.strava.com/api/v3/push_subscriptions"
+	requestDomain := StravaAPIDomain + "/push_subscriptions"
 	data := url.Values{}
 	data.Set("client_id", os.Getenv("STRAVA_CLIENT_ID"))
 	data.Set("client_secret", os.Getenv("STRAVA_CLIENT_SECRET"))
@@ -40,7 +40,6 @@ func GetSubscription() (StravaSubscription, error) {
 		return StravaSubscription{}, err
 	}
 
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Error("Error making GetSubscription request",
@@ -59,16 +58,16 @@ func GetSubscription() (StravaSubscription, error) {
 
 	decoder := json.NewDecoder(resp.Body)
 
-	if !decoder.More() {
-		logger.Info("No existing Strava subscription found")
-		return StravaSubscription{}, nil
-	}
-
 	err = decoder.Decode(&subscription)
 	if err != nil {
 		logger.Error("Error decoding GetSubscription response",
 			slog.String("Error", err.Error()))
 		return StravaSubscription{}, err
+	}
+
+	if subscription.ID == 0 {
+		logger.Info("No existing Strava subscription found")
+		return StravaSubscription{}, nil
 	}
 
 	// Extracting domain from CallbackURL
@@ -80,7 +79,7 @@ func GetSubscription() (StravaSubscription, error) {
 
 }
 
-func CreateSubscription() error {
+func CreateSubscription(client *http.Client) error {
 	godotenv.Load()
 	logger := logging.CreateLogger()
 
@@ -102,7 +101,6 @@ func CreateSubscription() error {
 		return err
 	}
 
-	client := &http.Client{}
 	resp, err := client.Do(request)
 	if err != nil {
 		fmt.Printf("Error making request: %v\n", err)
@@ -112,7 +110,7 @@ func CreateSubscription() error {
 	return nil
 }
 
-func DeleteSubscription(subscriptionID int) error {
+func DeleteSubscription(client *http.Client, subscriptionID int) error {
 	godotenv.Load()
 	logger := logging.CreateLogger()
 
@@ -133,7 +131,6 @@ func DeleteSubscription(subscriptionID int) error {
 		return err
 	}
 
-	client := &http.Client{}
 	resp, err := client.Do(request)
 	if err != nil {
 		fmt.Printf("Error making request: %v\n", err)

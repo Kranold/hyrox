@@ -50,6 +50,7 @@ func TestCreateUser(t *testing.T) {
 		if err != nil {
 			log.Fatalf("Error loading .env file: %v", err)
 		}*/
+
 	dbURL := os.Getenv("DB_URL")
 
 	db, err := sql.Open("postgres", dbURL)
