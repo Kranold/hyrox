@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -15,8 +14,6 @@ import (
 
 func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 	logger := logging.CreateLogger()
-
-	fmt.Println(cfg.DB)
 
 	// Parse the JSON request body
 	type parameters struct {

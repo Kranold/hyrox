@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/Kranold/hyrox/internal/database"
 	"github.com/Kranold/hyrox/internal/logging"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -46,14 +48,19 @@ func TestCreateUser(t *testing.T) {
 
 	logger := logging.CreateLogger()
 
-	/*	err := godotenv.Load()
-		if err != nil {
-			log.Fatalf("Error loading .env file: %v", err)
-		}*/
+	/*Here is a hack to get the test running both via github actions
+	and locally by loading env variables. Not pretty
+	*/
+	err := godotenv.Load()
+	if err != nil {
+		godotenv.Load("../.env")
+	}
 
 	dbURL := os.Getenv("DB_URL")
 
+	fmt.Println("dburl:", dbURL)
 	db, err := sql.Open("postgres", dbURL)
+
 	if err != nil {
 		logger.Error("Error connecting to the database", slog.String("Error", err.Error()))
 		log.Fatalf("Error connecting to the database, shutting down application")
