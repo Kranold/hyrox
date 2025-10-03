@@ -60,9 +60,8 @@ func GetSubscription(client *http.Client) (StravaSubscription, error) {
 
 	err = decoder.Decode(&subscription)
 	if err != nil {
-		logger.Error("Error decoding GetSubscription response",
-			slog.String("Error", err.Error()))
-		return StravaSubscription{}, err
+		// This is a bit hacky, but no subscriptions give an empty array [], and thus returning nil error allows the API calls to create a new subsription
+		return StravaSubscription{}, nil
 	}
 
 	if subscription.ID == 0 {

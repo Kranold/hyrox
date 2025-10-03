@@ -14,7 +14,7 @@ func TestGetSubscription(t *testing.T) {
 
 	//Mock response data
 
-	noSubscriptionResponse := map[string]interface{}{}
+	noSubscriptionResponse := "[]"
 
 	existingSubscriptionResponse := map[string]interface{}{
 		"id":             123456,
