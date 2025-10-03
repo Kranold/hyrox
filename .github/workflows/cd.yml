@@ -50,7 +50,7 @@ jobs:
             --image europe-north2-docker.pkg.dev/hyrox-473608/hyrox-ar-repo/hyrox:latest \
             --region europe-north2 \
             --project hyrox-473608 \
-            --set-env-vars DB_URL="${{ secrets.DB_URL }}",GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}",JWTSECRET="${{ secrets.JWTSECRET }}",SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }}",STRAVA_CLIENT_ID="${{ secrets.STRAVA_CLIENT_ID }}",DOMAIN="https://hyrox-601006340303.europe-north2.run.app" \
+            --set-env-vars DB_URL="${{ secrets.DB_URL }}",GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}",JWTSECRET="${{ secrets.JWTSECRET }}",SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }}",STRAVA_CLIENT_ID="${{ secrets.STRAVA_CLIENT_ID }}",STRAVA_CLIENT_SECRET="${{ secrets.STRAVA_CLIENT_SECRET }}",DOMAIN="https://hyrox-601006340303.europe-north2.run.app" \
             --allow-unauthenticated \
             --max-instances=4
 
