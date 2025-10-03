@@ -56,7 +56,14 @@ func GetSubscription() (StravaSubscription, error) {
 		return StravaSubscription{}, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 	var subscription StravaSubscription
+
 	decoder := json.NewDecoder(resp.Body)
+
+	if !decoder.More() {
+		logger.Info("No existing Strava subscription found")
+		return StravaSubscription{}, nil
+	}
+
 	err = decoder.Decode(&subscription)
 	if err != nil {
 		logger.Error("Error decoding GetSubscription response",
