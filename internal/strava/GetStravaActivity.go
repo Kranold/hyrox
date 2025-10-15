@@ -13,7 +13,7 @@ import (
 func GetStravaActivity(ctx context.Context, client *http.Client, accessToken string, activityID int64) (StravaActivity, error) {
 	logger := logging.CreateLogger()
 
-	activityURL := fmt.Sprintf("%s/v3/activities/%d/?include_all_efforts=", StravaAPIDomain, activityID)
+	activityURL := fmt.Sprintf("%s/activities/%d/?include_all_efforts=", StravaAPIDomain, activityID)
 
 	// Preparing the HTTP Request
 	req, err := http.NewRequest("GET", activityURL, nil)
@@ -36,7 +36,7 @@ func GetStravaActivity(ctx context.Context, client *http.Client, accessToken str
 	if resp.StatusCode != http.StatusOK {
 		logger.Error("Unexpected status code when getting activity",
 			slog.Int("StatusCode", resp.StatusCode),
-			slog.Any("Request", req),
+			slog.String("RequestURL", activityURL),
 			slog.Any("ResponseBody", resp.Body))
 		return StravaActivity{}, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
