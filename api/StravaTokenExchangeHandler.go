@@ -1,28 +1,35 @@
 package api
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/Kranold/hyrox/internal/auth"
 	"github.com/Kranold/hyrox/internal/database"
 	"github.com/Kranold/hyrox/internal/helperfunctions"
+	"github.com/Kranold/hyrox/internal/logging"
 	"github.com/Kranold/hyrox/internal/strava"
 )
 
 func (cfg *APIConfig) StravaTokenExchangeHandler(w http.ResponseWriter, r *http.Request) {
+	logger := logging.CreateLogger()
+
 	authcode := r.URL.Query().Get("code")
 	jwtToken := r.URL.Query().Get("token")
 
 	if authcode == "" {
+		logger.Error("Missing auth code in request",
+			slog.String("Error", "Missing auth code"))
 		http.Error(w, "Missing auth code", http.StatusBadRequest)
 		return
 	}
 	// Exchange auth code for access and refresh tokens
-	tokenResponse, err := strava.GetStravaAccessTokens(authcode)
+	client := &http.Client{}
+	tokenResponse, err := strava.LinkStravaAccount(client, authcode)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error exchanging auth code for tokens",
+			slog.String("Error", err.Error()))
 		http.Error(w, "Error exchanging auth code for tokens", http.StatusInternalServerError)
 		return
 	}
@@ -31,6 +38,8 @@ func (cfg *APIConfig) StravaTokenExchangeHandler(w http.ResponseWriter, r *http.
 
 	userID, err := auth.ValidateJWT(jwtToken, cfg.JWTSecret)
 	if err != nil {
+		logger.Error("Invalid JWT token",
+			slog.String("Error", err.Error()))
 		http.Error(w, "Invalid JWT token", http.StatusUnauthorized)
 		return
 	}
@@ -50,7 +59,9 @@ func (cfg *APIConfig) StravaTokenExchangeHandler(w http.ResponseWriter, r *http.
 
 	stravaUser, err := cfg.DB.CreateStravaUser(r.Context(), newStravaUserData)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error storing strava user data",
+			slog.Any("StravaUserData", newStravaUserData),
+			slog.String("Error", err.Error()))
 		http.Error(w, "Error storing strava user data", http.StatusInternalServerError)
 		return
 	}
@@ -65,7 +76,9 @@ func (cfg *APIConfig) StravaTokenExchangeHandler(w http.ResponseWriter, r *http.
 
 	_, err = cfg.DB.CreateStravaAccessToken(r.Context(), newStravaAccessToken)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Error storing strava access token",
+			slog.Any("StravaAccessToken", newStravaAccessToken),
+			slog.String("Error", err.Error()))
 		http.Error(w, "Error storing strava access token", http.StatusInternalServerError)
 		return
 	}

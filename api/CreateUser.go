@@ -8,6 +8,7 @@ import (
 
 	"github.com/Kranold/hyrox/internal/auth"
 	"github.com/Kranold/hyrox/internal/database"
+	"github.com/Kranold/hyrox/internal/emailservice"
 	"github.com/Kranold/hyrox/internal/helperfunctions"
 	"github.com/Kranold/hyrox/internal/logging"
 )
@@ -62,17 +63,7 @@ func (cfg *APIConfig) CreateUser(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:   user.UpdatedAt,
 	}
 
-	data, err := json.Marshal(respData)
-	if err != nil {
-		logger.Error("Error encoding response",
-			slog.String("Error", err.Error()))
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
-
-	// Sending the response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(data)
+	RespondWithJSON(w, logger, http.StatusCreated, respData)
+	emailservice.SendWelcomeEmail(respData.Username, respData.Email)
 
 }

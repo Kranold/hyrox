@@ -17,17 +17,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type accessToken struct {
+type AccessToken struct {
 	TokenType   string
 	AccessToken string
 	ExpiresAt   time.Time
 }
 
-func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uuid.UUID) (accessToken, error) {
+func (cfg *StravaService) GetStravaAccessToken(ctx context.Context, client *http.Client, userID uuid.UUID) (AccessToken, error) {
 	godotenv.Load()
 	logger := logging.CreateLogger()
 
-	var returnToken accessToken
+	var returnToken AccessToken
 
 	// Fetching tokens
 	stravaAccessTokens, err := cfg.DB.GetStravaAccessTokensByApplicationUserID(ctx, userID)
@@ -35,11 +35,11 @@ func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uu
 		logger.Error("Error fetching strava access tokens from DB",
 			slog.Any("userID", userID),
 			slog.String("Error", err.Error()))
-		return accessToken{}, err
+		return AccessToken{}, err
 	}
 	// Checking if access token is still valid, and returning if it is
 	if stravaAccessTokens.ExpiresAt.After(time.Now()) {
-		returnToken = accessToken{
+		returnToken = AccessToken{
 			TokenType:   stravaAccessTokens.TokenType,
 			AccessToken: stravaAccessTokens.AccessToken,
 			ExpiresAt:   stravaAccessTokens.ExpiresAt,
@@ -52,7 +52,7 @@ func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uu
 	// Access token is expired, using refresh token to get new access token
 
 	//Creating the required request body parameters and creating the request
-	authURL := "https://www.strava.com//api/v3/oauth/token"
+	authURL := StravaAPIDomain + "/oauth/token"
 	data := url.Values{}
 	data.Set("client_id", os.Getenv("STRAVA_CLIENT_ID"))
 	data.Set("client_secret", os.Getenv("STRAVA_CLIENT_SECRET"))
@@ -67,16 +67,16 @@ func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uu
 			slog.String("userID", userID.String()),
 			slog.String("Error", err.Error()),
 			slog.String("stacktrace", string(debug.Stack())))
-		return accessToken{}, err
+		return AccessToken{}, err
 	}
-	client := &http.Client{}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Error("Error requesting new Strava access token",
 			slog.String("userID", userID.String()),
 			slog.String("Error", err.Error()),
 			slog.String("stacktrace", string(debug.Stack())))
-		return accessToken{}, err
+		return AccessToken{}, err
 	}
 	defer resp.Body.Close()
 
@@ -85,7 +85,7 @@ func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uu
 			slog.Int("StatusCode", resp.StatusCode),
 			slog.String("userID", userID.String()),
 			slog.String("stacktrace", string(debug.Stack())))
-		return accessToken{}, err
+		return AccessToken{}, err
 	}
 
 	//Parsing the response
@@ -96,11 +96,11 @@ func (cfg *StravaService) GetNewStravaAccessToken(ctx context.Context, userID uu
 		logger.Error("Error decoding strava token response",
 			slog.String("userID", userID.String()),
 			slog.String("Error", err.Error()))
-		return accessToken{}, err
+		return AccessToken{}, err
 	}
 
 	//Preparing the tokenResponse for return
-	returnToken = accessToken{
+	returnToken = AccessToken{
 		TokenType:   tokenResponse.TokenType,
 		AccessToken: tokenResponse.AccessToken,
 		ExpiresAt:   time.Unix(int64(tokenResponse.ExpiresAt), 0),

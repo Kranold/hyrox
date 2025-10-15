@@ -40,13 +40,11 @@ func main() {
 
 	// serving API calls
 	mux.HandleFunc("/create_user", apiCfg.CreateUser)
-	mux.Handle("/getactivities", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetAllStravaActivites)))
+	mux.Handle("/sync_strava_activities", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.SyncStravaActivites)))
 	mux.HandleFunc("/strava_token_exchange", apiCfg.StravaTokenExchangeHandler)
-	mux.HandleFunc("POST /delete_users", apiCfg.DeleteAllUsers)
+	mux.HandleFunc("/delete_users", apiCfg.DeleteAllUsers)
 	mux.HandleFunc("/login", apiCfg.Login)
-	mux.Handle("/get_coaching", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.GetCoaching)))
 	mux.Handle("/send_coaching_email", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.SendCoachingEmail)))
-
 	mux.HandleFunc("/strava_webhook_create", apiCfg.CreateStravaWebhookSubscription)
 	mux.HandleFunc("GET /validate_strava_subscription", apiCfg.ValidateStravaWebhookSubscription)
 	mux.HandleFunc("POST /validate_strava_subscription", apiCfg.StravaWebhookHandler)

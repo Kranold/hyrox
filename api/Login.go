@@ -3,14 +3,18 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/Kranold/hyrox/internal/auth"
 	"github.com/Kranold/hyrox/internal/database"
+	"github.com/Kranold/hyrox/internal/logging"
 )
 
 func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
+	logger := logging.CreateLogger()
+
 	type parameters struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -19,12 +23,17 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&loginParams)
 	if err != nil {
+		logger.Error("Error decoding request body",
+			slog.String("Error", err.Error()))
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 
 	user, err := cfg.DB.GetUserByEmail(r.Context(), loginParams.Email)
 	if err != nil {
+		logger.Error("Error fetching user by email",
+			slog.String("Email", loginParams.Email),
+			slog.String("Error", err.Error()))
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
@@ -41,6 +50,9 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 	expiryTime := time.Duration(360000 * time.Second)
 	jwtToken, err := auth.MakeJWT(user.ID, cfg.JWTSecret, expiryTime)
 	if err != nil {
+		logger.Error("Error creating JWT token",
+			slog.String("UserID", user.ID.String()),
+			slog.String("Error", err.Error()))
 		http.Error(w, "Error creating JWT token", http.StatusInternalServerError)
 		return
 	}
@@ -58,7 +70,9 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 			ExpiresAt: time.Now().Add(expiryTime),
 		})
 		if err != nil {
-			fmt.Println(err)
+			logger.Error("Error creating refresh token",
+				slog.String("UserID", user.ID.String()),
+				slog.String("Error", err.Error()))
 			http.Error(w, "Error creating refresh token", http.StatusInternalServerError)
 			return
 
@@ -76,7 +90,9 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 		refreshTokenData, err = cfg.DB.UpdateRefreshToken(r.Context(), newTokenData)
 
 		if err != nil {
-			fmt.Println(err)
+			logger.Error("Error updating refresh token",
+				slog.String("UserID", user.ID.String()),
+				slog.String("Error", err.Error()))
 			http.Error(w, "Error updating refresh token", http.StatusInternalServerError)
 			return
 
@@ -115,14 +131,6 @@ func (cfg *APIConfig) Login(w http.ResponseWriter, r *http.Request) {
 		User:                   userRespData,
 	}
 
-	data, err := json.Marshal(responseData)
-	if err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
+	RespondWithJSON(w, logger, http.StatusOK, responseData)
 
-	// Sending the response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(data)
 }

@@ -11,7 +11,13 @@ import (
 	"google.golang.org/genai"
 )
 
-func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string, error) {
+type CoachingNotes struct {
+	SuggestedNextTraining string `json:"Suggested_next_training"`
+	FocusForNextWeek      string `json:"Focus_for_next_week"`
+	InjuryPrevention      string `json:"Injury_preventaion"`
+}
+
+func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (CoachingNotes, error) {
 	godotenv.Load()
 	logger := logging.CreateLogger()
 	// Fetch user data and activities from Strava
@@ -22,7 +28,7 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 		logger.Error("Error fetching user activities",
 			"userID", userid.String(),
 			"Error", err.Error())
-		return "", err
+		return CoachingNotes{}, err
 	}
 	userData, _ := cfg.DB.GetUserByID(ctx, userid)
 
@@ -33,11 +39,11 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 	}
 	contextJSON, _ := json.MarshalIndent(contextData, "", "  ")
 
-	responseJSON := `{
-        "Suggested_next_training": "",
-        "Focus_for_next_week": "",
-        "Injury_preventaion": ""
-    }`
+	responseJSON := CoachingNotes{
+		SuggestedNextTraining: "",
+		FocusForNextWeek:      "",
+		InjuryPrevention:      "",
+	}
 
 	testJSON, _ := json.Marshal(responseJSON)
 	// create various prompts
@@ -46,7 +52,7 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 	contextPrompt += string(contextJSON)
 
 	systemPrompt := "You are a professional fitness coach. Provide personalized advice and training suggestions based on the user's data and activities."
-	systemPrompt += "Respond only in JSON with the follow structure, retunr nothing else than the json \n" + string(testJSON)
+	systemPrompt += "Respond only in JSON with the follow structure, return nothing else than the json \n" + string(testJSON)
 
 	userPrompt := "Analyze the  user data and recent activities to provide tailored fitness advice and suggest the next training session. Also suggest the focus areas for next weeks training, and give very specific advice regarding injury risk. Consider if the user could be risking injuries from current training volume and intensity and if so give specific advice how to reduce injury risk. Make your self concise and only give specific and concrete advice. "
 
@@ -58,7 +64,7 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 	if err != nil {
 		logger.Error("Error creating Gemini client in AICoaching",
 			"Error", err.Error())
-		return "", err
+		return CoachingNotes{}, err
 	}
 
 	result, err := client.Models.GenerateContent(
@@ -72,11 +78,21 @@ func (cfg *AIService) AICoaching(ctx context.Context, userid uuid.UUID) (string,
 			"error", err.Error(),
 			"stacktrace", string(debug.Stack()),
 			"context_error", ctx.Err().Error())
-		return "", err
+		return CoachingNotes{}, err
 	}
 	res := result.Text()[7 : len(result.Text())-3]
 
+	coachingResult := CoachingNotes{}
+	err = json.Unmarshal([]byte(res), &coachingResult)
+	if err != nil {
+		logger.Error("Error unmarshalling coaching result",
+			"error", err.Error(),
+			"stacktrace", string(debug.Stack()),
+			"context_error", ctx.Err().Error())
+		return CoachingNotes{}, err
+	}
+
 	logger.Info("AI Coaching generated successfully",
 		"userID", userid.String())
-	return res, nil
+	return coachingResult, nil
 }

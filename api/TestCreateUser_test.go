@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -49,16 +48,13 @@ func TestCreateUser(t *testing.T) {
 	logger := logging.CreateLogger()
 
 	/*Here is a hack to get the test running both via github actions
-	and locally by loading env variables. Not pretty
-	*/
+	and locally by loading env variables. Not pretty*/
 	err := godotenv.Load()
 	if err != nil {
 		godotenv.Load("../.env")
 	}
 
 	dbURL := os.Getenv("DB_URL")
-
-	fmt.Println("dburl:", dbURL)
 	db, err := sql.Open("postgres", dbURL)
 
 	if err != nil {

@@ -1,50 +1,34 @@
 package emailservice
 
 import (
-	"fmt"
-	"log/slog"
-	"os"
-
-	"github.com/Kranold/hyrox/internal/logging"
-	"github.com/joho/godotenv"
-	"github.com/sendgrid/sendgrid-go"
+	"github.com/Kranold/hyrox/internal/aiservice"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-func SendCoachingEmail(userName string, email string, advice string) error {
-	godotenv.Load()
-	logger := logging.CreateLogger()
+func SendCoachingEmail(userName string, email string, notes aiservice.CoachingNotes) error {
 
 	//Email content
 	from := mail.NewEmail("Rolf Carlsen", "rolfkranold@gmail.com")
-	subject := "Your Personalized Coaching Advice"
 	to := mail.NewEmail(userName, email)
-	htmlContent := "<strong>" + "Hello" + userName + "</strong>" + advice
-	plainTextContent := advice
 
-	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	message := mail.NewV3Mail()
 
-	//Sending email
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-	resp, err := client.Send(message)
+	message.SetFrom(from)
+	message.SetTemplateID("d-56a8f5e04a2d491bbb4e8adc63b917ed")
+	//Email content
 
+	personalization := mail.NewPersonalization()
+	personalization.AddTos(to)
+	personalization.SetDynamicTemplateData("user_first_name", userName)
+	personalization.SetDynamicTemplateData("suggested_next_training", notes.SuggestedNextTraining)
+	personalization.SetDynamicTemplateData("next_week_focus", notes.FocusForNextWeek)
+	personalization.SetDynamicTemplateData("injury_prevention", notes.InjuryPrevention)
+
+	message.AddPersonalizations(personalization)
+
+	err := SendEmail(message)
 	if err != nil {
-		logger.Error(fmt.Sprintf("Error sending email http request with code %d", resp.StatusCode),
-			slog.String("Error", err.Error()))
 		return err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		logger.Info("Coaching email sent successfully",
-			slog.Int("StatusCode", resp.StatusCode),
-			slog.String("ResponseBody", resp.Body))
-	}
-
-	if resp.StatusCode >= 400 {
-		logger.Error("Error sending coaching email",
-			slog.Int("StatusCode", resp.StatusCode),
-			slog.String("ResponseBody", resp.Body))
-		return fmt.Errorf("failed to send email, status code: %d", resp.StatusCode)
 	}
 
 	return nil

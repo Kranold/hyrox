@@ -83,6 +83,7 @@ func HandleActivityCreate(ctx context.Context, db database.Queries, eventParams 
 	aiservice := aiservice.AIService{
 		DB: db,
 	}
+	client := &http.Client{}
 
 	user, err := db.GetUserFromStravaID(ctx, eventParams.OwnerID)
 	if err != nil {
@@ -92,7 +93,7 @@ func HandleActivityCreate(ctx context.Context, db database.Queries, eventParams 
 		return err
 	}
 
-	accessToken, _ := StravaService.GetNewStravaAccessToken(ctx, user.ID)
+	accessToken, _ := StravaService.GetStravaAccessToken(ctx, client, user.ID)
 	if accessToken.AccessToken == "" {
 		logger.Error("No access token found for user",
 			slog.Int64("StravaID", eventParams.OwnerID),
@@ -100,7 +101,7 @@ func HandleActivityCreate(ctx context.Context, db database.Queries, eventParams 
 		return fmt.Errorf("no access token found for user with StravaID %d", eventParams.OwnerID)
 	}
 
-	activity, err := strava.GetDetailedStravaActivity(ctx, accessToken.AccessToken, eventParams.ObjectID)
+	activity, err := strava.GetStravaActivity(ctx, client, accessToken.AccessToken, eventParams.ObjectID)
 	if err != nil {
 		logger.Error("Error getting detailed strava activity",
 			slog.Int64("ActivityID", eventParams.ObjectID),

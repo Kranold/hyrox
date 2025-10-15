@@ -1,5 +1,8 @@
 package api
 
+// Deprecated for now - delete later if not needed
+
+/*
 import (
 	"encoding/json"
 	"fmt"
@@ -41,3 +44,5 @@ func (cfg *APIConfig) GetCoaching(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(data)
 }
+
+*/

@@ -3,12 +3,17 @@ package strava
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/Kranold/hyrox/internal/logging"
 )
 
-func GetStravaAccessTokens(authcode string) (StravaTokenResponse, error) {
+func LinkStravaAccount(client *http.Client, authcode string) (StravaTokenResponse, error) {
+	logger := logging.CreateLogger()
+
 	authURL := "https://www.strava.com/oauth/token"
 
 	//Creating the required request body parameters and creating the request
@@ -22,23 +27,25 @@ func GetStravaAccessTokens(authcode string) (StravaTokenResponse, error) {
 	fullURL := fmt.Sprintf("%s?%s", authURL, data.Encode())
 	req, err := http.NewRequest("POST", fullURL, nil)
 	if err != nil {
-		fmt.Printf("Error creating request: %v\n", err)
+		logger.Error("Error creating request to link Strava account",
+			slog.String("Error", err.Error()))
 		return StravaTokenResponse{}, err
 	}
 	// Setting the appropriate headers
 	req.Header.Set("Content-Type", "application/json")
 
 	//Making the http request
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("Error making request: %v\n", err)
+		logger.Error("Error making request to link Strava account",
+			slog.String("Error", err.Error()))
 		return StravaTokenResponse{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Unexpected status code: %d\n", resp.StatusCode)
+		logger.Error("Unexpected status code when linking Strava account",
+			slog.Int("StatusCode", resp.StatusCode))
 		return StravaTokenResponse{}, err
 	}
 
@@ -48,7 +55,8 @@ func GetStravaAccessTokens(authcode string) (StravaTokenResponse, error) {
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&tokenResponse)
 	if err != nil {
-		fmt.Printf("Error decoding response: %v\n", err)
+		logger.Error("Error decoding token response when linking Strava account",
+			slog.String("Error", err.Error()))
 		return StravaTokenResponse{}, err
 	}
 
