@@ -36,6 +36,7 @@ func GetStravaActivity(ctx context.Context, client *http.Client, accessToken str
 	if resp.StatusCode != http.StatusOK {
 		logger.Error("Unexpected status code when getting activity",
 			slog.Int("StatusCode", resp.StatusCode),
+			slog.Any("Request", req),
 			slog.Any("ResponseBody", resp.Body))
 		return StravaActivity{}, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
